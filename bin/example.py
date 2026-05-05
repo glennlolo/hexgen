@@ -11,7 +11,7 @@ options = {
     "sea_percent": 60,
     "hydrosphere": True,
     "num_rivers": 125,
-    "num_territories": 0
+    "num_territories": 0,
 }
 
 gen = generate(options, image=True)
