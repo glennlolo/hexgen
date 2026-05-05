@@ -9,9 +9,9 @@ jobs:
       max-parallel: 5
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@main
     - name: Set up Python 3.13.5
-      uses: actions/setup-python@v3
+      uses: actions/setup-python@main
       with:
         python-version: '3.13.5'
     - name: Create the venv
@@ -32,4 +32,11 @@ jobs:
     - name: Test with pytest
       run: |
         pip install pytest
-        pytest
+        pytest --junit-xml=test-report.xml
+    - name: Test Report
+      uses: dorny/test-reporter@v3
+      if: ${{ !cancelled() }}       # run this step even if previous step failed
+      with:
+        name: Hexgen Tests            # Name of the check run which will be created
+        path: test-report.xml         # Path to test results
+        reporter: python-xunit        # Format of test results
