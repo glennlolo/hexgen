@@ -20,6 +20,7 @@ parser.add_argument("--hydrosphere", action="store_true")
 parser.add_argument("--image", action="store_true")
 parser.add_argument("--num-rivers", type=int)
 parser.add_argument("--num-territories", type=int)
+parser.add_argument("--export-type", type=str)
 parser.add_argument("--debug", action="store_true")
 args = parser.parse_args()
 
@@ -33,7 +34,8 @@ options = {
     "sea_percent": args.sea_percent or 60,
     "hydrosphere": args.hydrosphere or True,
     "num_rivers": args.num_rivers or 125,
-    "num_territories": args.num_territories or 0
+    "num_territories": args.num_territories or 0,
+    "export_type": args.export_type or "png"
 }
 
 gen = generate(options, debug=args.debug, image=args.image)
