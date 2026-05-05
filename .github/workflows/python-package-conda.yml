@@ -36,8 +36,11 @@ jobs:
     - name: Run Linters flake8 and black
       uses: wearerequired/lint-action@v2
       with:
+        auto_fix: true
         black: true
+        black_auto_fix: true
         flake8: true
+        flake8_auto_fix: false
     - name: Test with pytest
       run: |
         pip install pytest
