@@ -13,8 +13,7 @@ class Month:
         return (
             "<Month ordinal={} "
             "num_days={} "
-            "day_length={}>".format(self.ordinal,
-                                    self.num_days, self.day_length)
+            "day_length={}>".format(self.ordinal, self.num_days, self.day_length)
         )
 
 
