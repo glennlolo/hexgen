@@ -2,6 +2,7 @@ import uuid
 from hexgen.enums import EdgeDirection
 
 
+
 class Edge:
     def __init__(self, side, one, two, up, down):
         """

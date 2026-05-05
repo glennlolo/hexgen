@@ -1,7 +1,16 @@
 import uuid
 import random
 
-from hexgen.constants import *
+from hexgen.constants import (
+    TEMPERATURE_COLORS,
+    TERRAN_OCEAN_SATELLITE,
+    GLACIAL_SATELLITE,
+    VOLCANIC_SATELLITE,
+    VOLCANIC_LIQUID,
+    BARREN_SATELLITE,
+    BARREN_WET,
+    DUSTY_BARREN_SATELLITE,
+)
 from hexgen.enums import (
     Biome,
     MapType,
@@ -17,7 +26,7 @@ from hexgen.util import (
     lighten,
     randomize_color,
 )
-
+from hexgen.edge import Edge
 
 class Hex:
     def __init__(self, grid, x, y, altitude):
@@ -792,6 +801,3 @@ class Hex:
             round((self.pressure[1] - self.grid.params.get("surface_pressure"))) * 5
         )
         return ((100 + end_year, 100, 100), (100 + mid_year, 100, 100))
-
-
-from hexgen.edge import Edge

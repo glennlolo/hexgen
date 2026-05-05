@@ -1,10 +1,8 @@
 import sys
-
-sys.setrecursionlimit(1500)
 import random
-
 from hexgen.hex import Hex
 
+sys.setrecursionlimit(1500)
 
 class Territory:
 

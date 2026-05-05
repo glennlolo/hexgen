@@ -1,12 +1,8 @@
-import uuid
 import copy
 import json
 import math
 import random
 import sys
-
-sys.setrecursionlimit(10000)
-
 from hexgen.constants import *
 from hexgen.territory import Territory
 from hexgen.enums import (
@@ -31,6 +27,10 @@ from hexgen.util import (
     first_hex_without_geoform,
     is_peninsula,
 )
+from hexgen.river import RiverSegment
+from hexgen.hex import HexSide, HexFeature
+
+sys.setrecursionlimit(10000)
 
 default_params = {
     "map_type": MapType.terran,
@@ -172,7 +172,7 @@ class MapGen:
 
                 center_hex = crater.get("hex")
                 size = crater.get("size")
-                depth = crater.get("depth")
+                #depth = crater.get("depth")
                 hexes = []
 
                 if size >= 1:
@@ -226,10 +226,10 @@ class MapGen:
                     i += 1
                     this_height = round(height / i)
                     if i == 1:
-                        l = center_hex.surrounding + [center_hex]
+                        idc = center_hex.surrounding + [center_hex]
                     else:
-                        l = center_hex.bubble(distance=i)
-                    for h in l:
+                        idc = center_hex.bubble(distance=i)
+                    for h in idc:
                         hexes.append(h)
                         h.altitude = center_hex.altitude + this_height
                         h.add_feature(HexFeature.volcano)
@@ -300,7 +300,7 @@ class MapGen:
         Makes territories
         """
         # select number of territories to place
-        land_percent = 100 - self.params.get("sea_percent")
+        #land_percent = 100 - self.params.get("sea_percent")
         num_territories = self.params.get("num_territories")
 
         # give each a land pixel to start
@@ -325,7 +325,7 @@ class MapGen:
         # loop over each, adding hexes
         total_hexes = self.hex_grid.size * self.hex_grid.size
         count = 0
-        while count < total_hexes:  #  i in range(0, 15):
+        while count < total_hexes:  # i in range(0, 15):
             count = 0
             # print("Start: {} < {}".format(count, total_hexes))
             territories = self.territories
@@ -634,7 +634,7 @@ class MapGen:
                 Make a new river source edge at an random edge pointing out from this lake
                     that has a direction pointing out from the lake
         """
-        land_percent = 100 - self.params.get("sea_percent")
+        #land_percent = 100 - self.params.get("sea_percent")
         num_rivers = self.params.get("num_rivers")
         print("Making {} rivers".format(num_rivers)) if self.debug else False
 
@@ -737,7 +737,7 @@ class MapGen:
                 elif one_valid is False and two_valid is True:
                     # print("\tTwo is valid")
                     selected = edge_two
-                    last_unselected = edge_one, side_one
+                    #last_unselected = edge_one, side_one
                     if selected.down.altitude < self.hex_grid.sealevel:
                         finished = True
                     segment.next = RiverSegment(
@@ -1089,7 +1089,3 @@ class MapGen:
             with Timer("Writing data to JSON file", self.debug):
                 json.dump(data, outfile)
         return data
-
-
-from hexgen.river import RiverSegment
-from hexgen.hex import Hex, HexSide, HexFeature
