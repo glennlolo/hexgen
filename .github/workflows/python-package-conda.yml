@@ -16,8 +16,8 @@ jobs:
         python-version: '3.13.5'
     - name: Create the venv
       run: |
-        python3 -m venv .venv
-        source .venv/bin/activate
+        python3 -m venv $GITHUB_WORKSPACE/.venv
+        source $GITHUB_WORKSPACE/.venv/bin/activate
     - name: Install dependencies
       run: |
         python3 -m pip install --upgrade pip
@@ -26,9 +26,9 @@ jobs:
       run: |
         pip install flake8
         # stop the build if there are Python syntax errors or undefined names
-        flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+        flake8 ./hexgen --count --select=E9,F63,F7,F82 --show-source --statistics
         # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-        flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+        flake8 ./hexgen --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       run: |
         pip install pytest
