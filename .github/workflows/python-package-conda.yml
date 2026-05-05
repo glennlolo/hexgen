@@ -34,7 +34,7 @@ jobs:
         # # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
         # flake8 ./hexgen --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Run Linters flake8 and black
-      uses: wearerequired/lint-action@v2
+      uses: wearerequired/lint-action@main
       with:
         auto_fix: true
         black: true
@@ -46,7 +46,7 @@ jobs:
         pip install pytest
         pytest --junit-xml=test-report.xml
     - name: Test Report
-      uses: dorny/test-reporter@v3
+      uses: dorny/test-reporter@main
       if: ${{ !cancelled() }}       # run this step even if previous step failed
       with:
         name: Hexgen Tests            # Name of the check run which will be created
