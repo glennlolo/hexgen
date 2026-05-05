@@ -1,6 +1,7 @@
 import math
 import random
 
+
 class Month:
 
     def __init__(self, ordinal, num_days, day_length):
@@ -9,9 +10,11 @@ class Month:
         self.day_length = day_length
 
     def __repr__(self):
-        return "<Month ordinal={} " \
-                "num_days={} " \
-                "day_length={}>".format(self.ordinal, self.num_days, self.day_length)
+        return (
+            "<Month ordinal={} "
+            "num_days={} "
+            "day_length={}>".format(self.ordinal, self.num_days, self.day_length)
+        )
 
 
 class Calendar:
@@ -33,7 +36,7 @@ class Calendar:
         # print("Target length of month: {}".format(month_length_target))
 
         found_month_number = year_length
-        while(math.floor(year_length / found_month_number) < month_length_target):
+        while math.floor(year_length / found_month_number) < month_length_target:
             num_months = found_month_number
             found_month_number -= 1
         # print("Number of months: {}".format(num_months))
@@ -48,10 +51,11 @@ class Calendar:
                 num_days = days_left
             else:
                 num_days = even_split
-            self.months.append( Month(num, num_days, day_length) )
+            self.months.append(Month(num, num_days, day_length))
             days_left -= even_split
 
         # print('total', sum([x.num_days for x in self.months]))
+
 
 #
 # import pprint
