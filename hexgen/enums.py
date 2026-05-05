@@ -19,9 +19,9 @@ class SuperEnum(Enum):
 
     @classmethod
     def get(cls, id_):
-        l = [item for item in list(cls.__members__) if getattr(cls[item], "id") == id_]
-        if l is not None and len(l) > 0:
-            return cls[l[0]]
+        idx = [item for item in list(cls.__members__) if getattr(cls[item], "id") == id_]
+        if idx is not None and len(idx) > 0:
+            return cls[idx[0]]
         else:
             return None
 

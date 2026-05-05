@@ -1,5 +1,3 @@
-import random
-
 from hexgen.mapgen import MapGen
 from hexgen.hex import HexFeature
 from hexgen.constants import *

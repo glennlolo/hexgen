@@ -1,6 +1,5 @@
-from enum import Enum
 import uuid
-
+from hexgen.enums import EdgeDirection
 
 class Edge:
     def __init__(self, side, one, two, up, down):
@@ -71,8 +70,3 @@ class Edge:
         return other.one == self.two or (
             self.one == other.one and self.two == other.two
         )
-
-
-from hexgen.hex import HexSide
-
-from hexgen.enums import EdgeDirection

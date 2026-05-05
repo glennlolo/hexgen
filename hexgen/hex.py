@@ -1,7 +1,5 @@
 import uuid
-import math
 import random
-from enum import Enum
 
 from hexgen.constants import *
 from hexgen.enums import (
@@ -18,10 +16,6 @@ from hexgen.util import (
     blend_colors,
     lighten,
     randomize_color,
-    pressure_at_seasons,
-    decide_wind,
-    is_opposite_hex,
-    memoized,
 )
 
 
