@@ -4,6 +4,7 @@ from hexgen.hex import Hex
 
 sys.setrecursionlimit(1500)
 
+
 class Territory:
 
     def __init__(self, grid, main, id_num, color):

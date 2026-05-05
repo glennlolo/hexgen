@@ -172,7 +172,7 @@ class MapGen:
 
                 center_hex = crater.get("hex")
                 size = crater.get("size")
-                #depth = crater.get("depth")
+                # depth = crater.get("depth")
                 hexes = []
 
                 if size >= 1:
@@ -300,7 +300,7 @@ class MapGen:
         Makes territories
         """
         # select number of territories to place
-        #land_percent = 100 - self.params.get("sea_percent")
+        # land_percent = 100 - self.params.get("sea_percent")
         num_territories = self.params.get("num_territories")
 
         # give each a land pixel to start
@@ -634,7 +634,7 @@ class MapGen:
                 Make a new river source edge at an random edge pointing out from this lake
                     that has a direction pointing out from the lake
         """
-        #land_percent = 100 - self.params.get("sea_percent")
+        # land_percent = 100 - self.params.get("sea_percent")
         num_rivers = self.params.get("num_rivers")
         print("Making {} rivers".format(num_rivers)) if self.debug else False
 
@@ -737,7 +737,7 @@ class MapGen:
                 elif one_valid is False and two_valid is True:
                     # print("\tTwo is valid")
                     selected = edge_two
-                    #last_unselected = edge_one, side_one
+                    # last_unselected = edge_one, side_one
                     if selected.down.altitude < self.hex_grid.sealevel:
                         finished = True
                     segment.next = RiverSegment(

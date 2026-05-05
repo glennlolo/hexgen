@@ -28,6 +28,7 @@ from hexgen.util import (
 )
 from hexgen.edge import Edge
 
+
 class Hex:
     def __init__(self, grid, x, y, altitude):
         self.x = x
