@@ -341,13 +341,16 @@ def draw_grid(hex_grid):
 #     session.commit()
 
 
-def generate(params, debug=True, image=True):
+def generate(params, debug=True, image=True, heightmapFile=""):
     """
     Given a colony, creates a world map
     :param params: generator parameters
+    :param debug: whether to print debug information
+    :param image: whether to draw map images
+    :param heightmapFile: path to an external heightmap file
     :return: True or False on success
     """
-    hex_grid = MapGen(params=params, debug=debug)
+    hex_grid = MapGen(params=params, debug=debug, heightmapFile=heightmapFile)
 
     if image:
         draw_grid(hex_grid)

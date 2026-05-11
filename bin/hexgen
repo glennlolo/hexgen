@@ -22,6 +22,7 @@ parser.add_argument("--num-rivers", type=int)
 parser.add_argument("--num-territories", type=int)
 parser.add_argument("--export-type", type=str)
 parser.add_argument("--debug", action="store_true")
+parser.add_argument("--heightmapFile", type=str)
 args = parser.parse_args()
 
 options = {
@@ -38,5 +39,5 @@ options = {
     "export_type": args.export_type or "png"
 }
 
-gen = generate(options, debug=args.debug, image=args.image)
+gen = generate(options, debug=args.debug, image=args.image, heightmapFile=args.heightmapFile or "")
 gen.export('output/world-data.json')

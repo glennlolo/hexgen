@@ -1,40 +1,64 @@
 import math
 import random
 import numpy as np
+from PIL import Image
 
 
 class Heightmap:
 
-    def __init__(self, params, debug=False):
+    def __init__(self, params, debug=False, heightmapFile=""):
         self.params = params
 
-        # start making the heightmap
         self.size = params.get("size")
         self.grid = np.zeros((self.size, self.size))
-        self.grid[0][0] = random.randint(0, 255)
-        self.grid[self.size - 1][0] = random.randint(0, 255)
-        self.grid[0][self.size - 1] = random.randint(0, 255)
-        self.grid[self.size - 1][self.size - 1] = random.randint(0, 255)
-        self._subdivide(0, 0, self.size - 1, self.size - 1)
+        if heightmapFile == "":
+            # start making the heightmap
+            self.grid[0][0] = random.randint(0, 255)
+            self.grid[self.size - 1][0] = random.randint(0, 255)
+            self.grid[0][self.size - 1] = random.randint(0, 255)
+            self.grid[self.size - 1][self.size - 1] = random.randint(0, 255)
+            self._subdivide(0, 0, self.size - 1, self.size - 1)
 
-        # compute average and record top height
-        avg = []
-        m = []
-        for g in self.grid:
-            m.append(max(g))
-            avg.append(sum(g) / float(len(g)))
+            # compute average and record top height
+            avg = []
+            m = []
+            for g in self.grid:
+                m.append(max(g))
+                avg.append(sum(g) / float(len(g)))
 
-        self.highest_height = max(m)
-        self.lowest_height = min(m)
-        self.average_height = sum(avg) / float(len(avg))
-        sea_percent = params.get("sea_percent")
-        self.sealevel = round(self.average_height * (sea_percent * 2 / 100))
+            self.highest_height = max(m)
+            self.lowest_height = min(m)
+            self.average_height = sum(avg) / float(len(avg))
+            sea_percent = params.get("sea_percent")
+            self.sealevel = round(self.average_height * (sea_percent * 2 / 100))
 
-        if sea_percent == 100:
-            self.sealevel = 255
+            if sea_percent == 100:
+                self.sealevel = 255
 
-        if debug:
-            print("Sea level at {} or {}%".format(self.sealevel, sea_percent))
+            if debug:
+                print("Sea level at {} or {}%".format(self.sealevel, sea_percent))
+        else:
+            # load heightmap from file
+            print("Loading heightmap from file: {}".format(heightmapFile))
+            im = Image.open(heightmapFile)
+            imSize = im.size # Get the width and height of the image
+            factor = math.floor(min(imSize) /self.size) # Calculate the scaling factor
+            pix = im.get_flattened_data() # Get the pixel data of the image
+            for i in range(self.size-1):
+                for j in range(self.size-1):
+                    p = []
+                    # Construct the pixels of the original image
+                    for k in range(factor):
+                        p.append(pix[int(i*factor + (k+j)*imSize[0]):int((i+1)*factor + (k+j)*imSize[0])])
+                    # Average the pixel values to get the height value for the heightmap
+                    self.grid[i][j] = int(np.mean(p))
+            self.highest_height = np.max(self.grid)
+            self.lowest_height = np.min(self.grid)
+            self.average_height = np.mean(self.grid)
+            self.sealevel = 0.0  #Orogen seal level is always at 0
+
+            if debug:
+                print("Sea level defaulting at {} for heightmap file".format(self.sealevel))
 
     def height_at(self, x, y):
         return self.grid[x][y]
