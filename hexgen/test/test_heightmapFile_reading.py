@@ -31,8 +31,8 @@ class TestHeightmapFileReading(TestCase):
     def test_sealevel(self):
         self.assertEqual(
             self.heightmap.sealevel,
-            0.0,
-            "Heightmap sealevel should be 0 when loading from file",
+            1.0,
+            "Heightmap sealevel should be 1.0 when loading from file",
         )
 
     def test_height_min(self):

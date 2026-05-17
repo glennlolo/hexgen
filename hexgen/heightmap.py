@@ -1,12 +1,15 @@
 import math
 import random
 import numpy as np
-from PIL import Image
+from PIL import (
+    Image,
+    ImageFilter
+)
 
 
 class Heightmap:
 
-    def __init__(self, params, debug=False, heightmapFile=""):
+    def __init__(self, params, debug=False, heightmapFile="", landMaskFile=""):
         self.params = params
 
         self.size = params.get("size")
@@ -41,6 +44,8 @@ class Heightmap:
             # load heightmap from file
             print("Loading heightmap from file: {}".format(heightmapFile))
             im = Image.open(heightmapFile)
+            if debug:
+                im.show()
             imSize = im.size # Get the width and height of the image
             factor = math.floor(min(imSize) /self.size) # Calculate the scaling factor
             pix = im.get_flattened_data() # Get the pixel data of the image
@@ -49,16 +54,32 @@ class Heightmap:
                     p = []
                     # Construct the pixels of the original image
                     for k in range(factor):
-                        p.append(pix[int(i*factor + (k+j)*imSize[0]):int((i+1)*factor + (k+j)*imSize[0])])
+                        p.append(pix[int(i*factor*imSize[0] + (k+j*factor)):int((i+1)*factor*imSize[0] + (k+j*factor)):imSize[0]])
                     # Average the pixel values to get the height value for the heightmap
                     self.grid[i][j] = int(np.mean(p))
             self.highest_height = np.max(self.grid)
             self.lowest_height = np.min(self.grid)
-            self.average_height = np.mean(self.grid)
-            self.sealevel = 0.0  #Orogen seal level is always at 0
+            self.average_height = np.median(self.grid)
+            if landMaskFile == "":
+                # By default use 0.0 as default sea level
+                self.sealevel = 1.0
+                if debug:
+                    print("Sea level defaulting at {} for heightmap file".format(self.sealevel))
+            else:
+                # Use LandMaskFile if their is one provided to compute sea shores height
+                print("Loading land mask to compute shores from file: {}".format(landMaskFile))
+                imMask = Image.open(landMaskFile)
+                imContour = imMask.filter(ImageFilter.CONTOUR) # Find the edges of the land mask to compute the shores
+                pixContour = imContour.get_flattened_data() #Get the contours pixels
+                if debug:
+                    imContour.show()
+                contourIdx = []
+                for i in range(len(pixContour)):
+                    if pixContour[i] == (0,0,0,255):
+                        contourIdx.append(i)
+                        break
+                self.sealevel = pix[contourIdx[0]] + 1.0  #The sea level is equal to the one of the 
 
-            if debug:
-                print("Sea level defaulting at {} for heightmap file".format(self.sealevel))
 
     def height_at(self, x, y):
         return self.grid[x][y]

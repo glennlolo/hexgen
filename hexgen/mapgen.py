@@ -61,7 +61,7 @@ class MapGen:
     """generates a heightmap as an array of integers between 1 and 255
     using the diamond-square algorithm"""
 
-    def __init__(self, params, debug=False, heightmapFile=""):
+    def __init__(self, params, debug=False, heightmapFile="", landMaskFile=""):
         """initialize"""
         self.params = default_params
         self.params.update(params)
@@ -80,7 +80,7 @@ class MapGen:
             with Timer("Building Heightmap", self.debug):
                 self.heightmap = Heightmap(self.params, self.debug)
         else:
-            self.heightmap = Heightmap(self.params, self.debug, heightmapFile)
+            self.heightmap = Heightmap(self.params, self.debug, heightmapFile, landMaskFile)
 
         self.hex_grid = Grid(self.heightmap, self.params)
         if self.debug is True:
