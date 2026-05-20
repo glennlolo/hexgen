@@ -44,11 +44,15 @@ class Heightmap:
             # load heightmap from file
             print("Loading heightmap from file: {}".format(heightmapFile))
             im = Image.open(heightmapFile)
+            if params.get("crop") != []:
+                print("Cropping heightmap with coordinates: {}".format(params.get("crop")))
+                im = im.crop(params.get("crop"))
             if debug:
                 im.show()
             imSize = im.size # Get the width and height of the image
             factor = math.floor(min(imSize) /self.size) # Calculate the scaling factor
             pix = im.get_flattened_data() # Get the pixel data of the image
+            maxPix = max(pix) # Get the maximum pixel value to normalize the heightmap
             for i in range(self.size-1):
                 for j in range(self.size-1):
                     p = []
@@ -56,7 +60,7 @@ class Heightmap:
                     for k in range(factor):
                         p.append(pix[int(i*factor*imSize[0] + (k+j*factor)):int((i+1)*factor*imSize[0] + (k+j*factor)):imSize[0]])
                     # Average the pixel values to get the height value for the heightmap
-                    self.grid[i][j] = int(np.mean(p))
+                    self.grid[i][j] = np.mean(p)*255/maxPix
             self.highest_height = np.max(self.grid)
             self.lowest_height = np.min(self.grid)
             self.average_height = np.median(self.grid)
@@ -69,16 +73,26 @@ class Heightmap:
                 # Use LandMaskFile if their is one provided to compute sea shores height
                 print("Loading land mask to compute shores from file: {}".format(landMaskFile))
                 imMask = Image.open(landMaskFile)
+                if params.get("crop") != []:
+                    print("Cropping LandMask with coordinates: {}".format(params.get("crop")))
+                    imMask = imMask.crop(params.get("crop"))
                 imContour = imMask.filter(ImageFilter.CONTOUR) # Find the edges of the land mask to compute the shores
+                imContour = imContour.crop([1,1,imContour.size[0]-1,imContour.size[1]-1]) # Crop the contour to remove the black border
                 pixContour = imContour.get_flattened_data() #Get the contours pixels
                 if debug:
                     imContour.show()
-                contourIdx = []
-                for i in range(len(pixContour)):
-                    if pixContour[i] == (0,0,0,255):
-                        contourIdx.append(i)
-                        break
-                self.sealevel = pix[contourIdx[0]] + 1.0  #The sea level is equal to the one of the 
+                contourHeight = []
+                for i in range(self.size-1):
+                    for j in range(self.size-1):
+                        # Construct the pixels of the original image
+                        for k in range(factor):
+                            p = pixContour[int(i*factor*imSize[0] + (k+j*factor)):int((i+1)*factor*imSize[0] + (k+j*factor)):imSize[0]]
+                            if any(slice == (0,0,0,255) for slice in p):
+                                contourHeight.append(self.grid[i][j]) # Get the height values of the shores to compute the sea level
+                                break
+                self.sealevel = np.median(contourHeight)  #The sea level is equal to the one of the 
+                if debug:
+                    print("Sea level median at {} for landMask file".format(self.sealevel))
 
 
     def height_at(self, x, y):
