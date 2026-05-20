@@ -178,7 +178,7 @@ class Hex:
 
     @property
     def latitude_ratio(self):
-        ratio = self.x / self.grid.size
+        ratio = self._ratio()
         if ratio < 0.5:
             ratio /= 0.5
         else:
@@ -194,11 +194,20 @@ class Hex:
     @property
     def latitude(self):
         """Hex's current Latitude. Negative is south, positive is north"""
-        ratio = self.x / self.grid.size
+        ratio = self._ratio()
         if ratio < 0.5:  # north
             return (1 - ratio / 0.5) * 90
         else:  # south
             return ((ratio) / 0.5) * -90 + 90
+
+    def _ratio(self):
+        if self.grid.centerLatitude != 0.0:
+            # if there is cropping, then adapt the latitude ratio
+            subRatio = self.x / self.grid.size
+            ratio = (90 - self.grid.latitudeRange[0]) / 180 + subRatio * (self.grid.latitudeRange[0] - self.grid.latitudeRange[1]) / 180
+        else:
+            ratio = self.x / self.grid.size
+        return ratio
 
     @property
     def zone(self):

@@ -44,6 +44,7 @@ class Heightmap:
             # load heightmap from file
             print("Loading heightmap from file: {}".format(heightmapFile))
             im = Image.open(heightmapFile)
+            self.fullMapSize = im.size # Get the full map size
             if params.get("crop") != []:
                 print("Cropping heightmap with coordinates: {}".format(params.get("crop")))
                 im = im.crop(params.get("crop"))

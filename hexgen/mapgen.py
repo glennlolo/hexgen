@@ -82,7 +82,7 @@ class MapGen:
         else:
             self.heightmap = Heightmap(self.params, self.debug, heightmapFile, landMaskFile)
 
-        self.hex_grid = Grid(self.heightmap, self.params)
+        self.hex_grid = Grid(self.heightmap, self.params, self.debug)
         if self.debug is True:
             print("\tAverage Height: {}".format(self.hex_grid.average_height))
             print("\tHighest Height: {}".format(self.hex_grid.highest_height))

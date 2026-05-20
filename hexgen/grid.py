@@ -31,6 +31,19 @@ class Grid:
                 if self.grid[x][y].is_water:
                     self.num_ocean_hexes += 1
 
+        if self.params.get("crop") != []:
+            #if their is cropping, then change center latitude of the grid
+            crop = self.params.get("crop")
+            # The center latitude is obtained by a three rule
+            self.centerLatitude = (self.heightmap.fullMapSize[1] / 2 - (crop[1] + (crop[3] - crop[1]) / 2)) * 90 / (self.heightmap.fullMapSize[1] / 2)
+            self.latitudeRange = [(self.heightmap.fullMapSize[1] / 2 - crop[1]) * 90 / (self.heightmap.fullMapSize[1] / 2),
+                                       (self.heightmap.fullMapSize[1] / 2 - crop[3]) * 90 / (self.heightmap.fullMapSize[1] / 2)]
+            if debug:
+                print("Centering grid latitude at : {}, with range {}".format(self.centerLatitude, self.latitudeRange))
+        else:
+            self.centerLatitude = 0.0
+            self.latitudeRange = [90, -90]
+
         self.calculate()
 
     @property
