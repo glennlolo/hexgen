@@ -27,6 +27,7 @@ class TestHeightmap(TestCase):
             "Heightmap does not wrap vertically on the bottom",
         )
 
+
 class TestHeightmapFileReading(TestCase):
 
     def setUp(self):
@@ -34,7 +35,7 @@ class TestHeightmapFileReading(TestCase):
         self.size = 100
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         params["size"] = self.size
-        self.heightmap = Heightmap(params,False,heightmapFile)
+        self.heightmap = Heightmap(params, False, heightmapFile)
 
     def test_init(self):
         self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
@@ -79,6 +80,7 @@ class TestHeightmapFileReading(TestCase):
             "Average height should be 0.4436065175097276 when loading this file",
         )
 
+
 class TestLandmaskFileReading(TestCase):
 
     def setUp(self):
@@ -87,7 +89,7 @@ class TestLandmaskFileReading(TestCase):
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
         params["size"] = self.size
-        self.heightmap = Heightmap(params,False,heightmapFile,landMaskFile)
+        self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
         self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
@@ -111,6 +113,7 @@ class TestLandmaskFileReading(TestCase):
             "Sea level from land mask should be 0.16802042801556422 when loading from file",
         )
 
+
 class TestCropping(TestCase):
 
     def setUp(self):
@@ -121,7 +124,7 @@ class TestCropping(TestCase):
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
         params["size"] = self.size
         params["crop"] = self.crop
-        self.heightmap = Heightmap(params,False,heightmapFile,landMaskFile)
+        self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
         self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
@@ -164,4 +167,4 @@ class TestCropping(TestCase):
             self.heightmap.average_height,
             0.01156718505969914,
             "Average height should be 0.01156718505969914 when loading this file",
-        )    
+        )

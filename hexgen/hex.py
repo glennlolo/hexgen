@@ -204,7 +204,9 @@ class Hex:
         if self.grid.centerLatitude != 0.0:
             # if there is cropping, then adapt the latitude ratio
             subRatio = self.x / self.grid.size
-            ratio = (90 - self.grid.latitudeRange[0]) / 180 + subRatio * (self.grid.latitudeRange[0] - self.grid.latitudeRange[1]) / 180
+            ratio = (90 - self.grid.latitudeRange[0]) / 180 + subRatio * (
+                self.grid.latitudeRange[0] - self.grid.latitudeRange[1]
+            ) / 180
         else:
             ratio = self.x / self.grid.size
         return ratio

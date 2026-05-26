@@ -351,7 +351,12 @@ def generate(params, debug=True, image=True, heightmapFile="", landMaskFile=""):
     :param landMaskFile: path to an external land mask file
     :return: True or False on success
     """
-    hex_grid = MapGen(params=params, debug=debug, heightmapFile=heightmapFile, landMaskFile=landMaskFile)
+    hex_grid = MapGen(
+        params=params,
+        debug=debug,
+        heightmapFile=heightmapFile,
+        landMaskFile=landMaskFile,
+    )
 
     if image:
         draw_grid(hex_grid)

@@ -80,7 +80,9 @@ class MapGen:
             with Timer("Building Heightmap", self.debug):
                 self.heightmap = Heightmap(self.params, self.debug)
         else:
-            self.heightmap = Heightmap(self.params, self.debug, heightmapFile, landMaskFile)
+            self.heightmap = Heightmap(
+                self.params, self.debug, heightmapFile, landMaskFile
+            )
 
         self.hex_grid = Grid(self.heightmap, self.params, self.debug)
         if self.debug is True:
