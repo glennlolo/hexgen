@@ -54,6 +54,8 @@ default_params = {
     "num_rivers": 50,
     # territories
     "num_territories": 0,
+    # cropping
+    "crop": [],
 }
 
 
