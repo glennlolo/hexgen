@@ -22,6 +22,9 @@ parser.add_argument("--num-rivers", type=int)
 parser.add_argument("--num-territories", type=int)
 parser.add_argument("--export-type", type=str)
 parser.add_argument("--debug", action="store_true")
+parser.add_argument("--heightmapFile", type=str)
+parser.add_argument("--landMaskFile", type=str)
+parser.add_argument("--crop", action="extend", nargs=4, type=int)
 args = parser.parse_args()
 
 options = {
@@ -35,8 +38,10 @@ options = {
     "hydrosphere": args.hydrosphere or True,
     "num_rivers": args.num_rivers or 125,
     "num_territories": args.num_territories or 0,
-    "export_type": args.export_type or "png"
+    "export_type": args.export_type or "png",
+    "crop": args.crop or []
 }
 
-gen = generate(options, debug=args.debug, image=args.image)
+gen = generate(options, debug=args.debug, image=args.image, heightmapFile=args.heightmapFile or "",
+                landMaskFile=args.landMaskFile or "")
 gen.export('output/world-data.json')

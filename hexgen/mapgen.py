@@ -54,6 +54,8 @@ default_params = {
     "num_rivers": 50,
     # territories
     "num_territories": 0,
+    # cropping
+    "crop": [],
 }
 
 
@@ -61,7 +63,7 @@ class MapGen:
     """generates a heightmap as an array of integers between 1 and 255
     using the diamond-square algorithm"""
 
-    def __init__(self, params, debug=False):
+    def __init__(self, params, debug=False, heightmapFile="", landMaskFile=""):
         """initialize"""
         self.params = default_params
         self.params.update(params)
@@ -76,10 +78,15 @@ class MapGen:
         if type(params.get("random_seed")) is int:
             random.seed(params.get("random_seed"))
 
-        with Timer("Building Heightmap", self.debug):
-            self.heightmap = Heightmap(self.params, self.debug)
+        if heightmapFile == "":  # if no heightmap file is provided, generate a new one
+            with Timer("Building Heightmap", self.debug):
+                self.heightmap = Heightmap(self.params, self.debug)
+        else:
+            self.heightmap = Heightmap(
+                self.params, self.debug, heightmapFile, landMaskFile
+            )
 
-        self.hex_grid = Grid(self.heightmap, self.params)
+        self.hex_grid = Grid(self.heightmap, self.params, self.debug)
         if self.debug is True:
             print("\tAverage Height: {}".format(self.hex_grid.average_height))
             print("\tHighest Height: {}".format(self.hex_grid.highest_height))
