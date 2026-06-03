@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--map-type")
 parser.add_argument("--surface-pressure", type=float)
 parser.add_argument("--axial-tilt", type=int)
-parser.add_argument("--size", type=int)
+parser.add_argument("--size", type=int, nargs='+')
 parser.add_argument("--base-temp", type=float)
 parser.add_argument("--avg-temp", type=int)
 parser.add_argument("--sea-percent", type=int)
@@ -41,6 +41,10 @@ options = {
     "export_type": args.export_type or "png",
     "crop": args.crop or []
 }
+
+if isinstance(options["size"], list):
+    #If this is a list, convert it to a tuple for easier handling
+    options["size"] = tuple(options["size"])
 
 gen = generate(options, debug=args.debug, image=args.image, heightmapFile=args.heightmapFile or "",
                 landMaskFile=args.landMaskFile or "")

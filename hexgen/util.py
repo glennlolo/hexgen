@@ -267,8 +267,8 @@ def is_strait(h):
 
 
 def first_hex_without_geoform(hexes):
-    for y, row in enumerate(hexes):
-        for x, col in enumerate(row):
+    for y in range(len(hexes[0])):
+        for x in range(len(hexes)):
             h = hexes[x][y]
             if h.geoform_type is None:
                 return h

@@ -29,8 +29,8 @@ class HexGridDraw:
         self.image = Image.new(
             "RGB",
             (
-                int(HEX_RECT_WIDTH * (grid.hex_grid.size + 0.6)),
-                int((HEX_RECT_WIDTH) * grid.hex_grid.size),
+                int(HEX_RECT_WIDTH * (grid.hex_grid.grid.shape[1] + 0.6)),
+                int((HEX_RECT_WIDTH) * grid.hex_grid.grid.shape[0]),
             ),
         )
         self.draw = ImageDraw.Draw(self.image)
@@ -43,8 +43,8 @@ class HexGridDraw:
         self.borders = borders
 
         with Timer("Making {}".format(file_name), True):
-            for y in range(grid.hex_grid.size):
-                for x in range(grid.hex_grid.size):
+            for y in range(grid.hex_grid.grid.shape[1]):
+                for x in range(grid.hex_grid.grid.shape[0]):
                     h = grid.hex_grid.find_hex(x, y)
                     self.draw_hexagon(
                         y * HEX_RECT_WIDTH + ((x % 2) * HEX_RADIUS),

@@ -111,8 +111,8 @@ class MapGen:
             # give coastal land hexes moisture based on how close to the coast they are
             # TODO: replace with more realistic model
             print("Making coastal moisture") if self.debug else False
-            for y, row in enumerate(self.hex_grid.grid):
-                for x, col in enumerate(row):
+            for y in range(self.hex_grid.grid.shape[1]):
+                for x in range(self.hex_grid.grid.shape[0]):
                     hex = self.hex_grid.grid[x][y]
                     if hex.is_land:
                         if hex.distance <= 5:
@@ -295,9 +295,9 @@ class MapGen:
                 chance = (
                     resource.get("rating").rarity
                     * resource.get("type").rarity
-                    * self.hex_grid.size
+                    * self.hex_grid.max_size
                     / 1000
-                ) / (math.pow(self.hex_grid.size, 2))
+                ) / (math.pow(self.hex_grid.max_size, 2))
                 given = random.uniform(0, 1)
                 if given <= chance:
                     h.resource = resource
@@ -425,36 +425,37 @@ class MapGen:
             # we don't care about distances otherwise
             return
 
-        for y, row in enumerate(self.hex_grid.grid):
-            for x, col in enumerate(row):
+        min_size = min(self.hex_grid.grid.shape[0], self.hex_grid.grid.shape[1])
+        for y in range(self.hex_grid.grid.shape[1]):
+            for x in range(self.hex_grid.grid.shape[0]):
                 h = self.hex_grid.grid[x][y]
                 if h.is_land:
                     count = 1
                     numbers = []
 
                     east = h.hex_east
-                    while east.is_land is True and count < self.hex_grid.size * 2:
+                    while east.is_land is True and count < min_size * 2:
                         east = east.hex_east
                         count += 1
                     numbers.append(count)
                     count = 1
 
                     west = h.hex_west
-                    while west.is_land is True and count < self.hex_grid.size * 2:
+                    while west.is_land is True and count < min_size * 2:
                         west = west.hex_west
                         count += 1
                     numbers.append(count)
                     count = 1
 
                     north_east = h.hex_north_east
-                    while north_east.is_land is True and count < self.hex_grid.size * 2:
+                    while north_east.is_land is True and count < min_size * 2:
                         north_east = north_east.hex_north_east
                         count += 1
                     numbers.append(count)
                     count = 1
 
                     north_west = h.hex_north_west
-                    while north_west.is_land is True and count < self.hex_grid.size * 2:
+                    while north_west.is_land is True and count < min_size * 2:
                         north_west = north_west.hex_north_west
                         count += 1
 
@@ -462,14 +463,14 @@ class MapGen:
                     count = 1
 
                     south_west = h.hex_south_west
-                    while south_west.is_land is True and count < self.hex_grid.size * 2:
+                    while south_west.is_land is True and count < min_size * 2:
                         south_west = south_west.hex_south_west
                         count += 1
                     numbers.append(count)
                     count = 1
 
                     south_east = h.hex_south_east
-                    while south_east.is_land is True and count < self.hex_grid.size * 2:
+                    while south_east.is_land is True and count < min_size * 2:
                         south_east = south_east.hex_south_east
                         count += 1
                     numbers.append(count)
@@ -484,8 +485,8 @@ class MapGen:
             with Timer("    calculating pressure zones", self.debug):
                 # calcualte pressure caused by pressure zones
                 pressure_diff = random.randint(3, 5)
-                for y, row in enumerate(self.hex_grid.grid):
-                    for x, col in enumerate(row):
+                for y in range(self.hex_grid.grid.shape[1]):
+                    for x in range(self.hex_grid.grid.shape[0]):
                         h = self.hex_grid.grid[x][y]
 
                         # end_year is winter, mid_year is summer
@@ -565,8 +566,8 @@ class MapGen:
         #     high pressure areas: counter-clockwise
         #     low pressure areas: clockwise
         with Timer("Generating wind", self.debug):
-            for y, row in enumerate(self.hex_grid.grid):
-                for x, col in enumerate(row):
+            for y in range(self.hex_grid.grid.shape[1]):
+                for x in range(self.hex_grid.grid.shape[0]):
                     h = self.hex_grid.grid[x][y]
                     h.wind = (
                         decide_wind(0, base_pressure, h),
@@ -611,8 +612,8 @@ class MapGen:
                 windgust(season_index, next_hex, loops - 1)
 
         with Timer("Generating Temperature Changes", self.debug):
-            for y, row in enumerate(self.hex_grid.grid):
-                for x, col in enumerate(row):
+            for y in range(self.hex_grid.grid.shape[1]):
+                for x in range(self.hex_grid.grid.shape[0]):
                     h = self.hex_grid.grid[x][y]
 
                     # end year
@@ -646,8 +647,8 @@ class MapGen:
         print("Making {} rivers".format(num_rivers)) if self.debug else False
 
         while len(self.rivers_sources) < num_rivers:
-            rx = random.randint(0, self.hex_grid.size - 1)
-            ry = random.randint(0, self.hex_grid.size - 1)
+            rx = random.randint(0, self.hex_grid.grid.shape[0] - 1)
+            ry = random.randint(0, self.hex_grid.grid.shape[1] - 1)
             hex_s = self.hex_grid.find_hex(rx, ry)
             if hex_s.is_inland and hex_s.altitude > self.hex_grid.sealevel + 35:
                 # if hex_s.temperature < 0:
@@ -799,8 +800,8 @@ class MapGen:
         # single hex geoforms
         with Timer("Finding geographic features", self.debug):
             with Timer("\tPlacing initial geoforms", self.debug):
-                for y, row in enumerate(self.hex_grid.grid):
-                    for x, col in enumerate(row):
+                for y in range(self.hex_grid.grid.shape[1]):
+                    for x in range(self.hex_grid.grid.shape[0]):
                         h = self.hex_grid.grid[x][y]
 
                         # Isthmus
