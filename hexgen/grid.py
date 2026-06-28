@@ -32,9 +32,9 @@ class Grid:
                 if self.grid[x][y].is_water:
                     self.num_ocean_hexes += 1
 
-        if self.params.get("crop") != []:
+        if self.params.get("crop"):
             # if their is cropping, then change center latitude of the grid
-            crop = self.params.get("crop")
+            crop = self.params.get("cropValue")
             # The center latitude is obtained by a three rule
             self.centerLatitude = (
                 (

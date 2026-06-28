@@ -55,7 +55,8 @@ default_params = {
     # territories
     "num_territories": 0,
     # cropping
-    "crop": [],
+    "crop": False,
+    "cropValue": (None, None, None, None),
 }
 
 

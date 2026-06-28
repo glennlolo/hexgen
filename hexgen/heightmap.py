@@ -52,17 +52,18 @@ class Heightmap:
             print("Loading heightmap from file: {}".format(heightmapFile))
             im = Image.open(heightmapFile)
             self.fullMapSize = im.size  # Get the full map size
-            if params.get("crop") != []:
+            pixFull = im.get_flattened_data()  # Get the pixel data of the image
+            if params["crop"]:
                 print(
-                    "Cropping heightmap with coordinates: {}".format(params.get("crop"))
+                    "Cropping heightmap with coordinates: {}".format(params.get("cropValue"))
                 )
-                im = im.crop(params.get("crop"))
+                im = im.crop(params.get("cropValue"))
             if debug:
                 im.show()
             imSize = im.size  # Get the width and height of the image
             factor = (math.floor(imSize[0] / self.width), math.floor(imSize[1] / self.height))  # Calculate the scaling factor
             pix = im.get_flattened_data()  # Get the pixel data of the image
-            maxPix = max(pix)  # Get the maximum pixel value to normalize the heightmap
+            maxPix = max(pixFull)  # Get the maximum pixel value to normalize the heightmap
             for i in range(self.height):
                 for j in range(self.width):
                     p = []
@@ -76,7 +77,7 @@ class Heightmap:
                             ]
                         )
                     # Average the pixel values to get the height value for the heightmap
-                    self.grid[i][j] = np.mean(p) * 255 / maxPix
+                    self.grid[i][j] = np.mean(p)*255/maxPix
             self.highest_height = np.max(self.grid)
             self.lowest_height = np.min(self.grid)
             self.average_height = np.median(self.grid)
@@ -97,13 +98,13 @@ class Heightmap:
                     )
                 )
                 imMask = Image.open(landMaskFile)
-                if params.get("crop") != []:
+                if params.get("crop"):
                     print(
                         "Cropping LandMask with coordinates: {}".format(
-                            params.get("crop")
+                            params.get("cropValue")
                         )
                     )
-                    imMask = imMask.crop(params.get("crop"))
+                    imMask = imMask.crop(params.get("cropValue"))
                 imContour = imMask.filter(
                     ImageFilter.CONTOUR
                 )  # Find the edges of the land mask to compute the shores
@@ -149,10 +150,10 @@ class Heightmap:
             ) * d * ROUGHNESS
             c = int(math.fabs(v) % 257)
             if y == 0:
-                self.grid[x][self.height - 1] = c
-            if x == 0 or x == self.width - 1:
+                self.grid[x][self.width - 1] = c
+            if x == 0 or x == self.height - 1:
                 if y < self.height - 1:
-                    self.grid[x][self.height - 1 - y] = c
+                    self.grid[x][self.width - 1 - y] = c
             range_low, range_high = self.params.get("height_range")
             if c < range_low:
                 c = range_low

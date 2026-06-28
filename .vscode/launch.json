@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${workspaceFolder}/bin/hexgen",
             "console": "integratedTerminal",
-            "args": "${command:pickArgs}"
+            "args": "--debug --image --crop --heightmapFile hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png --landMaskFile hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png --mapFile hexgen/test/orogen-satellite-0486ll4cxgegk2cs6um9hh.png"
         }
     ]
 }
