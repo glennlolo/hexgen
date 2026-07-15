@@ -11,14 +11,16 @@ class Heightmap:
 
         self.size = params.get("size")
         if isinstance(self.size, int):
-            #If their is only one value for size, we consider the heightmap to be square
+            # If their is only one value for size, we consider the heightmap to be square
             self.height = self.size
             self.width = self.size
         elif isinstance(self.size, tuple) and len(self.size) == 2:
             self.width = self.size[0]
             self.height = self.size[1]
         else:
-            raise ValueError("Size parameter must be a single value or a tuple of two values (height, width)")
+            raise ValueError(
+                "Size parameter must be a single value or a tuple of two values (height, width)"
+            )
 
         self.grid = np.ndarray((self.height, self.width), dtype=float)
         if heightmapFile == "":
@@ -55,15 +57,22 @@ class Heightmap:
             pixFull = im.get_flattened_data()  # Get the pixel data of the image
             if params["crop"]:
                 print(
-                    "Cropping heightmap with coordinates: {}".format(params.get("cropValue"))
+                    "Cropping heightmap with coordinates: {}".format(
+                        params.get("cropValue")
+                    )
                 )
                 im = im.crop(params.get("cropValue"))
             if debug:
                 im.show()
             imSize = im.size  # Get the width and height of the image
-            factor = (math.floor(imSize[0] / self.width), math.floor(imSize[1] / self.height))  # Calculate the scaling factor
+            factor = (
+                math.floor(imSize[0] / self.width),
+                math.floor(imSize[1] / self.height),
+            )  # Calculate the scaling factor
             pix = im.get_flattened_data()  # Get the pixel data of the image
-            maxPix = max(pixFull)  # Get the maximum pixel value to normalize the heightmap
+            maxPix = max(
+                pixFull
+            )  # Get the maximum pixel value to normalize the heightmap
             for i in range(self.height):
                 for j in range(self.width):
                     p = []
@@ -71,13 +80,18 @@ class Heightmap:
                     for k in range(factor[0]):
                         p.append(
                             pix[
-                                int(i * factor[1] * imSize[0] + (k + j * factor[0])) : int(
-                                    (i + 1) * factor[1] * imSize[0] + (k + j * factor[0])
-                                ) : imSize[0]
+                                int(
+                                    i * factor[1] * imSize[0] + (k + j * factor[0])
+                                ) : int(
+                                    (i + 1) * factor[1] * imSize[0]
+                                    + (k + j * factor[0])
+                                ) : imSize[
+                                    0
+                                ]
                             ]
                         )
                     # Average the pixel values to get the height value for the heightmap
-                    self.grid[i][j] = np.mean(p)*255/maxPix
+                    self.grid[i][j] = np.mean(p) * 255 / maxPix
             self.highest_height = np.max(self.grid)
             self.lowest_height = np.min(self.grid)
             self.average_height = np.median(self.grid)
@@ -120,9 +134,14 @@ class Heightmap:
                         # Construct the pixels of the original image
                         for k in range(factor[0]):
                             p = pixContour[
-                                int(i * factor[1] * imSize[0] + (k + j * factor[0])) : int(
-                                    (i + 1) * factor[1] * imSize[0] + (k + j * factor[0])
-                                ) : imSize[0]
+                                int(
+                                    i * factor[1] * imSize[0] + (k + j * factor[0])
+                                ) : int(
+                                    (i + 1) * factor[1] * imSize[0]
+                                    + (k + j * factor[0])
+                                ) : imSize[
+                                    0
+                                ]
                             ]
                             if any(slice == (0, 0, 0, 255) for slice in p):
                                 contourHeight.append(

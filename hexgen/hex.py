@@ -415,7 +415,9 @@ class Hex:
         """Returns the hex to the North East or None if end of map"""
         if self.x == 0:  # top of map
             return self.grid.find_hex(0, round(self.y / -1 + self.max_size[1]))
-        elif self.y == self.max_size[1] and self.x % 2 == 1:  # right of map and x is odd
+        elif (
+            self.y == self.max_size[1] and self.x % 2 == 1
+        ):  # right of map and x is odd
             return self.grid.find_hex(self.x - 1, 0)
         else:
             if self.x % 2 == 0:  # even
@@ -427,7 +429,9 @@ class Hex:
     def hex_south_west(self):
         """Returns the hex to the South West or None if end of map"""
         if self.x == self.max_size[0]:  # bottom of map
-            return self.grid.find_hex(self.max_size[0], round(self.y / -1 + self.max_size[1]))
+            return self.grid.find_hex(
+                self.max_size[0], round(self.y / -1 + self.max_size[1])
+            )
         elif self.y == 0 and self.x % 2 == 0:  # left of map and x is even
             return self.grid.find_hex(self.x + 1, self.max_size[1])
         else:
@@ -440,8 +444,12 @@ class Hex:
     def hex_south_east(self):
         """Returns the hex to the South East or None if end of map"""
         if self.x == self.max_size[0]:  # bottom of map
-            return self.grid.find_hex(self.max_size[0], round(self.y / -1 + self.max_size[1]))
-        elif self.y == self.max_size[1] and self.x % 2 == 1:  # right of map and x is odd
+            return self.grid.find_hex(
+                self.max_size[0], round(self.y / -1 + self.max_size[1])
+            )
+        elif (
+            self.y == self.max_size[1] and self.x % 2 == 1
+        ):  # right of map and x is odd
             return self.grid.find_hex(self.x + 1, 0)
         else:
             if self.x % 2 == 0:  # even

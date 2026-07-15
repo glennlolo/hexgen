@@ -8,18 +8,20 @@ from PIL import Image, ImageTk
 
 
 class MousePositionTracker(tk.Frame):
-    """ Tkinter Canvas mouse position widget. """
+    """Tkinter Canvas mouse position widget."""
 
     def __init__(self, canvas):
         self.canvas = canvas
-        self.canv_width = self.canvas.cget('width')
-        self.canv_height = self.canvas.cget('height')
+        self.canv_width = self.canvas.cget("width")
+        self.canv_height = self.canvas.cget("height")
         self.reset()
 
         # Create canvas cross-hair lines.
-        xhair_opts = dict(dash=(3, 2), fill='white', state=tk.HIDDEN)
-        self.lines = (self.canvas.create_line(0, 0, 0, self.canv_height, **xhair_opts),
-                      self.canvas.create_line(0, 0, self.canv_width,  0, **xhair_opts))
+        xhair_opts = dict(dash=(3, 2), fill="white", state=tk.HIDDEN)
+        self.lines = (
+            self.canvas.create_line(0, 0, 0, self.canv_height, **xhair_opts),
+            self.canvas.create_line(0, 0, self.canv_width, 0, **xhair_opts),
+        )
 
     def cur_selection(self):
         return (self.start, self.end)
@@ -60,61 +62,76 @@ class MousePositionTracker(tk.Frame):
 
     def quit(self, event):
         self.hide()  # Hide cross-hairs.
-        #self.reset()
+        # self.reset()
 
 
 class SelectionObject:
-    """ Widget to display a rectangular area on given canvas defined by two points
-        representing its diagonal.
+    """Widget to display a rectangular area on given canvas defined by two points
+    representing its diagonal.
     """
+
     def __init__(self, canvas, select_opts):
         # Create attributes needed to display selection.
         self.canvas = canvas
         self.select_opts1 = select_opts
-        self.width = self.canvas.cget('width')
-        self.height = self.canvas.cget('height')
+        self.width = self.canvas.cget("width")
+        self.height = self.canvas.cget("height")
 
         # Options for areas outside rectanglar selection.
         select_opts1 = self.select_opts1.copy()  # Avoid modifying passed argument.
         select_opts1.update(state=tk.HIDDEN)  # Hide initially.
         # Separate options for area inside rectanglar selection.
-        select_opts2 = dict(dash=(2, 2), fill='', outline='white', state=tk.HIDDEN)
+        select_opts2 = dict(dash=(2, 2), fill="", outline="white", state=tk.HIDDEN)
 
         # Initial extrema of inner and outer rectangles.
-        imin_x, imin_y,  imax_x, imax_y = 0, 0,  1, 1
-        omin_x, omin_y,  omax_x, omax_y = 0, 0,  self.width, self.height
+        imin_x, imin_y, imax_x, imax_y = 0, 0, 1, 1
+        omin_x, omin_y, omax_x, omax_y = 0, 0, self.width, self.height
 
         self.rects = (
             # Area *outside* selection (inner) rectangle.
-            self.canvas.create_rectangle(omin_x, omin_y,  omax_x, imin_y, **select_opts1),
-            self.canvas.create_rectangle(omin_x, imin_y,  imin_x, imax_y, **select_opts1),
-            self.canvas.create_rectangle(imax_x, imin_y,  omax_x, imax_y, **select_opts1),
-            self.canvas.create_rectangle(omin_x, imax_y,  omax_x, omax_y, **select_opts1),
+            self.canvas.create_rectangle(
+                omin_x, omin_y, omax_x, imin_y, **select_opts1
+            ),
+            self.canvas.create_rectangle(
+                omin_x, imin_y, imin_x, imax_y, **select_opts1
+            ),
+            self.canvas.create_rectangle(
+                imax_x, imin_y, omax_x, imax_y, **select_opts1
+            ),
+            self.canvas.create_rectangle(
+                omin_x, imax_y, omax_x, omax_y, **select_opts1
+            ),
             # Inner rectangle.
-            self.canvas.create_rectangle(imin_x, imin_y,  imax_x, imax_y, **select_opts2)
+            self.canvas.create_rectangle(
+                imin_x, imin_y, imax_x, imax_y, **select_opts2
+            ),
         )
 
     def update(self, start, end):
         # Current extrema of inner and outer rectangles.
-        imin_x, imin_y,  imax_x, imax_y = self._get_coords(start, end)
-        omin_x, omin_y,  omax_x, omax_y = 0, 0,  self.width, self.height
+        imin_x, imin_y, imax_x, imax_y = self._get_coords(start, end)
+        omin_x, omin_y, omax_x, omax_y = 0, 0, self.width, self.height
 
         # Update coords of all rectangles based on these extrema.
-        self.canvas.coords(self.rects[0], omin_x, omin_y,  omax_x, imin_y),
-        self.canvas.coords(self.rects[1], omin_x, imin_y,  imin_x, imax_y),
-        self.canvas.coords(self.rects[2], imax_x, imin_y,  omax_x, imax_y),
-        self.canvas.coords(self.rects[3], omin_x, imax_y,  omax_x, omax_y),
-        self.canvas.coords(self.rects[4], imin_x, imin_y,  imax_x, imax_y),
+        self.canvas.coords(self.rects[0], omin_x, omin_y, omax_x, imin_y),
+        self.canvas.coords(self.rects[1], omin_x, imin_y, imin_x, imax_y),
+        self.canvas.coords(self.rects[2], imax_x, imin_y, omax_x, imax_y),
+        self.canvas.coords(self.rects[3], omin_x, imax_y, omax_x, omax_y),
+        self.canvas.coords(self.rects[4], imin_x, imin_y, imax_x, imax_y),
 
         for rect in self.rects:  # Make sure all are now visible.
             self.canvas.itemconfigure(rect, state=tk.NORMAL)
 
     def _get_coords(self, start, end):
-        """ Determine coords of a polygon defined by the start and
-            end points one of the diagonals of a rectangular area.
+        """Determine coords of a polygon defined by the start and
+        end points one of the diagonals of a rectangular area.
         """
-        return (min((start[0], end[0])), min((start[1], end[1])),
-                max((start[0], end[0])), max((start[1], end[1])))
+        return (
+            min((start[0], end[0])),
+            min((start[1], end[1])),
+            max((start[0], end[0])),
+            max((start[1], end[1])),
+        )
 
     def hide(self):
         for rect in self.rects:
@@ -124,8 +141,7 @@ class SelectionObject:
 class Application(tk.Frame):
 
     # Default selection object options.
-    SELECT_OPTS = dict(dash=(2, 2), stipple='gray25', fill='red',
-                          outline='')
+    SELECT_OPTS = dict(dash=(2, 2), stipple="gray25", fill="red", outline="")
 
     def __init__(self, parent, path, WIDTH, HEIGHT, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
@@ -135,11 +151,11 @@ class Application(tk.Frame):
         im.thumbnail((WIDTH, HEIGHT))
         self.thumbnail_size = im.size  # Get the size of the thumbnail
         img = ImageTk.PhotoImage(im)
-        self.canvas = tk.Canvas(self, width=WIDTH, height=HEIGHT,
-                                borderwidth=0, highlightthickness=0)
+        self.canvas = tk.Canvas(
+            self, width=WIDTH, height=HEIGHT, borderwidth=0, highlightthickness=0
+        )
         self.canvas.pack(expand=True)
 
-        
         self.canvas.create_image(0, 0, image=img, anchor=tk.NW)
         self.canvas.img = img  # Keep reference.
 
@@ -159,6 +175,14 @@ class Application(tk.Frame):
         end = self.posn_tracker.end
         if start is None or end is None:
             sys.exit("No selection made. Please select an area to crop.")
-        #Resize according to thumbnail dimensions
-        ratio = (round(self.size[0] / self.thumbnail_size[0]), round(self.size[1] / self.thumbnail_size[1]))
-        return (start[0] * ratio[0], start[1] * ratio[1], end[0] * ratio[0], end[1] * ratio[1])
+        # Resize according to thumbnail dimensions
+        ratio = (
+            round(self.size[0] / self.thumbnail_size[0]),
+            round(self.size[1] / self.thumbnail_size[1]),
+        )
+        return (
+            start[0] * ratio[0],
+            start[1] * ratio[1],
+            end[0] * ratio[0],
+            end[1] * ratio[1],
+        )

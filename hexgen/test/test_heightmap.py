@@ -179,8 +179,12 @@ class TestHeightmapSizes(TestCase):
         self.heightmap = Heightmap(params)
 
     def test_init(self):
-        self.assertEqual(len(self.heightmap.grid), self.size[0], "Grid height is incorrect")
-        self.assertEqual(len(self.heightmap.grid[0]), self.size[1], "Grid width is incorrect")
+        self.assertEqual(
+            len(self.heightmap.grid), self.size[0], "Grid height is incorrect"
+        )
+        self.assertEqual(
+            len(self.heightmap.grid[0]), self.size[1], "Grid width is incorrect"
+        )
 
     def test_wrap(self):
         self.assertEqual(
@@ -199,7 +203,7 @@ class TestCroppingSizes(TestCase):
 
     def setUp(self):
         params = default_params
-        self.size = (100,150)
+        self.size = (100, 150)
         self.crop = [5000, 1400, 5701, 2084]
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
@@ -208,8 +212,12 @@ class TestCroppingSizes(TestCase):
         self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
-        self.assertEqual(len(self.heightmap.grid), self.size[0], "Grid height is incorrect")
-        self.assertEqual(len(self.heightmap.grid[0]), self.size[1], "Grid width is incorrect")
+        self.assertEqual(
+            len(self.heightmap.grid), self.size[0], "Grid height is incorrect"
+        )
+        self.assertEqual(
+            len(self.heightmap.grid[0]), self.size[1], "Grid width is incorrect"
+        )
 
     def test_wrap(self):
         self.assertEqual(
