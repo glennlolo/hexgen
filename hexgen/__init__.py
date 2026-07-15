@@ -3,6 +3,8 @@ from hexgen.hex import HexFeature
 from hexgen.constants import *
 from hexgen.enums import GeoformType
 from hexgen.draw import HexGridDraw
+from hexgen.mouseSelection import Application
+import tkinter as tk
 
 
 # @exec_time
@@ -341,7 +343,9 @@ def draw_grid(hex_grid):
 #     session.commit()
 
 
-def generate(params, debug=True, image=True, heightmapFile="", landMaskFile=""):
+def generate(
+    params, debug=True, image=True, mapFile="", heightmapFile="", landMaskFile=""
+):
     """
     Given a colony, creates a world map
     :param params: generator parameters
@@ -351,6 +355,25 @@ def generate(params, debug=True, image=True, heightmapFile="", landMaskFile=""):
     :param landMaskFile: path to an external land mask file
     :return: True or False on success
     """
+
+    if params["crop"] & (mapFile != ""):
+        print("cropping map from current map")
+        BACKGROUND = "grey"
+        TITLE = "Planet Image Cropper"
+        WIDTH, HEIGHT = 1000, 700
+
+        root = tk.Tk()
+        root.title(TITLE)
+        root.geometry("%sx%s" % (WIDTH, HEIGHT))
+        root.configure(background=BACKGROUND)
+
+        app = Application(
+            root, background=BACKGROUND, path=mapFile, WIDTH=WIDTH, HEIGHT=HEIGHT
+        )
+        app.pack(side=tk.TOP, fill=tk.BOTH, expand=tk.TRUE)
+        app.mainloop()
+        params["cropValue"] = app.cur_selection()
+
     hex_grid = MapGen(
         params=params,
         debug=debug,

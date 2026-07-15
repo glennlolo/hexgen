@@ -10,14 +10,26 @@ class Heightmap:
         self.params = params
 
         self.size = params.get("size")
-        self.grid = np.zeros((self.size, self.size))
+        if isinstance(self.size, int):
+            # If their is only one value for size, we consider the heightmap to be square
+            self.height = self.size
+            self.width = self.size
+        elif isinstance(self.size, tuple) and len(self.size) == 2:
+            self.width = self.size[0]
+            self.height = self.size[1]
+        else:
+            raise ValueError(
+                "Size parameter must be a single value or a tuple of two values (height, width)"
+            )
+
+        self.grid = np.ndarray((self.height, self.width), dtype=float)
         if heightmapFile == "":
             # start making the heightmap
             self.grid[0][0] = random.randint(0, 255)
-            self.grid[self.size - 1][0] = random.randint(0, 255)
-            self.grid[0][self.size - 1] = random.randint(0, 255)
-            self.grid[self.size - 1][self.size - 1] = random.randint(0, 255)
-            self._subdivide(0, 0, self.size - 1, self.size - 1)
+            self.grid[self.height - 1][0] = random.randint(0, 255)
+            self.grid[0][self.width - 1] = random.randint(0, 255)
+            self.grid[self.height - 1][self.width - 1] = random.randint(0, 255)
+            self._subdivide(0, 0, self.height - 1, self.width - 1)
 
             # compute average and record top height
             avg = []
@@ -42,27 +54,40 @@ class Heightmap:
             print("Loading heightmap from file: {}".format(heightmapFile))
             im = Image.open(heightmapFile)
             self.fullMapSize = im.size  # Get the full map size
-            if params.get("crop") != []:
+            pixFull = im.get_flattened_data()  # Get the pixel data of the image
+            if params["crop"]:
                 print(
-                    "Cropping heightmap with coordinates: {}".format(params.get("crop"))
+                    "Cropping heightmap with coordinates: {}".format(
+                        params.get("cropValue")
+                    )
                 )
-                im = im.crop(params.get("crop"))
+                im = im.crop(params.get("cropValue"))
             if debug:
                 im.show()
             imSize = im.size  # Get the width and height of the image
-            factor = math.floor(min(imSize) / self.size)  # Calculate the scaling factor
+            factor = (
+                math.floor(imSize[0] / self.width),
+                math.floor(imSize[1] / self.height),
+            )  # Calculate the scaling factor
             pix = im.get_flattened_data()  # Get the pixel data of the image
-            maxPix = max(pix)  # Get the maximum pixel value to normalize the heightmap
-            for i in range(self.size - 1):
-                for j in range(self.size - 1):
+            maxPix = max(
+                pixFull
+            )  # Get the maximum pixel value to normalize the heightmap
+            for i in range(self.height):
+                for j in range(self.width):
                     p = []
                     # Construct the pixels of the original image
-                    for k in range(factor):
+                    for k in range(factor[0]):
                         p.append(
                             pix[
-                                int(i * factor * imSize[0] + (k + j * factor)) : int(
-                                    (i + 1) * factor * imSize[0] + (k + j * factor)
-                                ) : imSize[0]
+                                int(
+                                    i * factor[1] * imSize[0] + (k + j * factor[0])
+                                ) : int(
+                                    (i + 1) * factor[1] * imSize[0]
+                                    + (k + j * factor[0])
+                                ) : imSize[
+                                    0
+                                ]
                             ]
                         )
                     # Average the pixel values to get the height value for the heightmap
@@ -87,13 +112,13 @@ class Heightmap:
                     )
                 )
                 imMask = Image.open(landMaskFile)
-                if params.get("crop") != []:
+                if params.get("crop"):
                     print(
                         "Cropping LandMask with coordinates: {}".format(
-                            params.get("crop")
+                            params.get("cropValue")
                         )
                     )
-                    imMask = imMask.crop(params.get("crop"))
+                    imMask = imMask.crop(params.get("cropValue"))
                 imContour = imMask.filter(
                     ImageFilter.CONTOUR
                 )  # Find the edges of the land mask to compute the shores
@@ -104,14 +129,19 @@ class Heightmap:
                 if debug:
                     imContour.show()
                 contourHeight = []
-                for i in range(self.size - 1):
-                    for j in range(self.size - 1):
+                for i in range(self.height):
+                    for j in range(self.width):
                         # Construct the pixels of the original image
-                        for k in range(factor):
+                        for k in range(factor[0]):
                             p = pixContour[
-                                int(i * factor * imSize[0] + (k + j * factor)) : int(
-                                    (i + 1) * factor * imSize[0] + (k + j * factor)
-                                ) : imSize[0]
+                                int(
+                                    i * factor[1] * imSize[0] + (k + j * factor[0])
+                                ) : int(
+                                    (i + 1) * factor[1] * imSize[0]
+                                    + (k + j * factor[0])
+                                ) : imSize[
+                                    0
+                                ]
                             ]
                             if any(slice == (0, 0, 0, 255) for slice in p):
                                 contourHeight.append(
@@ -139,10 +169,10 @@ class Heightmap:
             ) * d * ROUGHNESS
             c = int(math.fabs(v) % 257)
             if y == 0:
-                self.grid[x][self.size - 1] = c
-            if x == 0 or x == self.size - 1:
-                if y < self.size - 1:
-                    self.grid[x][self.size - 1 - y] = c
+                self.grid[x][self.width - 1] = c
+            if x == 0 or x == self.height - 1:
+                if y < self.height - 1:
+                    self.grid[x][self.width - 1 - y] = c
             range_low, range_high = self.params.get("height_range")
             if c < range_low:
                 c = range_low

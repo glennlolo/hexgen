@@ -15,6 +15,7 @@ class Grid:
         self.average_height = heightmap.average_height
         self.highest_height = heightmap.highest_height
         self.lowest_height = heightmap.lowest_height
+        self.max_size = np.max([self.heightmap.height, self.heightmap.width])
 
         self.avg_altitude = 0
 
@@ -24,16 +25,18 @@ class Grid:
         if debug:
             print("Making grid")
         self.num_ocean_hexes = 0
-        self.grid = np.ndarray((self.heightmap.size, self.heightmap.size), dtype=object)
-        for y, row in enumerate(self.grid):
-            for x, col in enumerate(row):
+        self.grid = np.ndarray(
+            (self.heightmap.height, self.heightmap.width), dtype=object
+        )
+        for y in range(self.heightmap.width):
+            for x in range(self.heightmap.height):
                 self.grid[x][y] = Hex(self, x, y, self.heightmap.height_at(x, y))
                 if self.grid[x][y].is_water:
                     self.num_ocean_hexes += 1
 
-        if self.params.get("crop") != []:
+        if self.params.get("crop"):
             # if their is cropping, then change center latitude of the grid
-            crop = self.params.get("crop")
+            crop = self.params.get("cropValue")
             # The center latitude is obtained by a three rule
             self.centerLatitude = (
                 (
@@ -78,12 +81,12 @@ class Grid:
         # run through the grid, calculate the edges
         alt = 0
         hexes = []
-        for y, row in enumerate(self.grid):
-            for x, col in enumerate(row):
+        for y in range(self.heightmap.width):
+            for x in range(self.heightmap.height):
                 self.grid[x][y].calculate()
                 alt += self.grid[x][y].altitude
                 hexes.append(self.grid[x][y])
-        self.avg_altitude = round(alt / math.pow(self.size, 2))
+        self.avg_altitude = round(alt / math.pow(self.max_size, 2))
 
         self.hexes = sorted(hexes, key=lambda x: x.temperature)
 

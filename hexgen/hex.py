@@ -187,7 +187,7 @@ class Hex:
 
     @property
     def hemisphere(self):
-        if self.x <= round(self.grid.size / 2):
+        if self.x <= round(self.grid.grid.shape[0] / 2):
             return Hemisphere.northern
         return Hemisphere.southern
 
@@ -203,12 +203,12 @@ class Hex:
     def _ratio(self):
         if self.grid.centerLatitude != 0.0:
             # if there is cropping, then adapt the latitude ratio
-            subRatio = self.x / self.grid.size
+            subRatio = self.x / self.grid.grid.shape[0]
             ratio = (90 - self.grid.latitudeRange[0]) / 180 + subRatio * (
                 self.grid.latitudeRange[0] - self.grid.latitudeRange[1]
             ) / 180
         else:
-            ratio = self.x / self.grid.size
+            ratio = self.x / self.grid.grid.shape[0]
         return ratio
 
     @property
@@ -340,7 +340,7 @@ class Hex:
 
     @property
     def max_size(self):
-        return len(self.grid.grid) - 1
+        return (self.grid.grid.shape[0] - 1, self.grid.grid.shape[1] - 1)
 
     @property
     def map_surrounding(self):
@@ -350,7 +350,7 @@ class Hex:
         """
         # east
         sur = []
-        if self.y != self.max_size:
+        if self.y != self.max_size[1]:
             sur.append(self.grid.find_hex(self.x, self.y + 1))
         # west
         if self.y != 0:
@@ -362,19 +362,19 @@ class Hex:
             else:
                 sur.append(self.grid.find_hex(self.x - 1, self.y))
         # north east
-        if self.x != 0 and self.y != self.max_size:
+        if self.x != 0 and self.y != self.max_size[1]:
             if self.x % 2 == 0:  # even
                 sur.append(self.grid.find_hex(self.x - 1, self.y))
             else:
                 sur.append(self.grid.find_hex(self.x - 1, self.y + 1))
         # south west
-        if self.x != self.max_size and self.y != 0:
+        if self.x != self.max_size[0] and self.y != 0:
             if self.x % 2 == 0:  # even
                 sur.append(self.grid.find_hex(self.x + 1, self.y - 1))
             else:
                 sur.append(self.grid.find_hex(self.x + 1, self.y))
         # south east
-        if self.x != self.max_size and self.y != self.max_size:
+        if self.x != self.max_size[0] and self.y != self.max_size[1]:
             if self.x % 2 == 0:  # even
                 sur.append(self.grid.find_hex(self.x + 1, self.y))
             else:
@@ -384,7 +384,7 @@ class Hex:
     @property
     def hex_east(self):
         """Returns the hex to the East or None if end of map"""
-        if self.y == self.max_size:
+        if self.y == self.max_size[1]:
             return self.grid.find_hex(self.x, 0)
         else:
             return self.grid.find_hex(self.x, self.y + 1)
@@ -393,7 +393,7 @@ class Hex:
     def hex_west(self):
         """Returns the hex to the West or None if end of map"""
         if self.y == 0:
-            return self.grid.find_hex(self.x, self.max_size)
+            return self.grid.find_hex(self.x, self.max_size[1])
         else:
             return self.grid.find_hex(self.x, self.y - 1)
 
@@ -401,9 +401,9 @@ class Hex:
     def hex_north_west(self):
         """Returns the hex to the north west"""
         if self.x == 0:  # top of map
-            return self.grid.find_hex(0, round(self.y / -1 + self.max_size))
+            return self.grid.find_hex(0, round(self.y / -1 + self.max_size[1]))
         elif self.y == 0 and self.x % 2 == 0:  # left of map and even
-            return self.grid.find_hex(self.x - 1, self.max_size)
+            return self.grid.find_hex(self.x - 1, self.max_size[1])
         else:
             if self.x % 2 == 0:  # even
                 return self.grid.find_hex(self.x - 1, self.y - 1)
@@ -414,8 +414,10 @@ class Hex:
     def hex_north_east(self):
         """Returns the hex to the North East or None if end of map"""
         if self.x == 0:  # top of map
-            return self.grid.find_hex(0, round(self.y / -1 + self.max_size))
-        elif self.y == self.max_size and self.x % 2 == 1:  # right of map and x is odd
+            return self.grid.find_hex(0, round(self.y / -1 + self.max_size[1]))
+        elif (
+            self.y == self.max_size[1] and self.x % 2 == 1
+        ):  # right of map and x is odd
             return self.grid.find_hex(self.x - 1, 0)
         else:
             if self.x % 2 == 0:  # even
@@ -426,10 +428,12 @@ class Hex:
     @property
     def hex_south_west(self):
         """Returns the hex to the South West or None if end of map"""
-        if self.x == self.max_size:  # bottom of map
-            return self.grid.find_hex(self.max_size, round(self.y / -1 + self.max_size))
+        if self.x == self.max_size[0]:  # bottom of map
+            return self.grid.find_hex(
+                self.max_size[0], round(self.y / -1 + self.max_size[1])
+            )
         elif self.y == 0 and self.x % 2 == 0:  # left of map and x is even
-            return self.grid.find_hex(self.x + 1, self.max_size)
+            return self.grid.find_hex(self.x + 1, self.max_size[1])
         else:
             if self.x % 2 == 0:  # even
                 return self.grid.find_hex(self.x + 1, self.y - 1)
@@ -439,9 +443,13 @@ class Hex:
     @property
     def hex_south_east(self):
         """Returns the hex to the South East or None if end of map"""
-        if self.x == self.max_size:  # bottom of map
-            return self.grid.find_hex(self.max_size, round(self.y / -1 + self.max_size))
-        elif self.y == self.max_size and self.x % 2 == 1:  # right of map and x is odd
+        if self.x == self.max_size[0]:  # bottom of map
+            return self.grid.find_hex(
+                self.max_size[0], round(self.y / -1 + self.max_size[1])
+            )
+        elif (
+            self.y == self.max_size[1] and self.x % 2 == 1
+        ):  # right of map and x is odd
             return self.grid.find_hex(self.x + 1, 0)
         else:
             if self.x % 2 == 0:  # even
