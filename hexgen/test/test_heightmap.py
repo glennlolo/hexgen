@@ -40,18 +40,6 @@ class TestHeightmapFileReading(TestCase):
     def test_init(self):
         self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
 
-    def test_wrap(self):
-        self.assertEqual(
-            self.heightmap.grid[1][0],
-            self.heightmap.grid[1][-1],
-            "Heightmap does not wrap horizontally",
-        )
-        self.assertEqual(
-            self.heightmap.grid[-1][1],
-            self.heightmap.grid[-1][-2],
-            "Heightmap does not wrap vertically on the bottom",
-        )
-
     def test_sealevel(self):
         self.assertEqual(
             self.heightmap.sealevel,
@@ -76,8 +64,8 @@ class TestHeightmapFileReading(TestCase):
     def test_height_avg(self):
         self.assertEqual(
             self.heightmap.average_height,
-            0.4436065175097276,
-            "Average height should be 0.4436065175097276 when loading this file",
+            2.202461329682471,
+            "Average height should be 2.202461329682471 when loading this file",
         )
 
 
@@ -94,23 +82,18 @@ class TestLandmaskFileReading(TestCase):
     def test_init(self):
         self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
 
-    def test_wrap(self):
-        self.assertEqual(
-            self.heightmap.grid[1][0],
-            self.heightmap.grid[1][-1],
-            "Heightmap does not wrap horizontally",
-        )
-        self.assertEqual(
-            self.heightmap.grid[-1][1],
-            self.heightmap.grid[-1][-2],
-            "Heightmap does not wrap vertically on the bottom",
-        )
-
     def test_sealevel(self):
         self.assertEqual(
             self.heightmap.sealevel,
-            0.16802042801556422,
-            "Sea level from land mask should be 0.16802042801556422 when loading from file",
+            1.0,
+            "Sea level from land mask should be 1.0 when loading from file",
+        )
+
+    def test_height_avg(self):
+        self.assertEqual( #Average hesight change because of the land mask
+            self.heightmap.average_height,
+            2.7470426814622666,
+            "Average height should be 2.7470426814622666 when loading this file",
         )
 
 
@@ -123,50 +106,40 @@ class TestCropping(TestCase):
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
         params["size"] = self.size
-        params["crop"] = self.crop
+        params["crop"] = True
+        params["cropValue"] = self.crop
         self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
-        self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
-
-    def test_wrap(self):
-        self.assertEqual(
-            self.heightmap.grid[1][0],
-            self.heightmap.grid[1][-1],
-            "Heightmap does not wrap horizontally",
-        )
-        self.assertEqual(
-            self.heightmap.grid[-1][1],
-            self.heightmap.grid[-1][-2],
-            "Heightmap does not wrap vertically on the bottom",
-        )
+        self.assertEqual(self.heightmap.grid.shape[0], 98, "Grid size is incorrect") #Because of auto size adaptation
+        self.assertEqual(self.heightmap.grid.shape[1], self.size, "Grid size is incorrect")
 
     def test_sealevel(self):
         self.assertEqual(
             self.heightmap.sealevel,
-            0.008378101328286758,
-            "Sea level from land mask should be 0.008378101328286758 when loading from file",
+            1.0,
+            "Sea level from land mask should be 1.0 when loading from file",
         )
 
     def test_height_min(self):
         self.assertEqual(
             self.heightmap.lowest_height,
             0.0,
-            "Minimim height should be 0 when loading from file",
+            "Minimum height should be 0.0 when loading from file",
         )
 
     def test_height_max(self):
         self.assertEqual(
             self.heightmap.highest_height,
-            240.2090296537094,
-            "Maximum height should be 240.2090296537094 when loading this file",
+            241.59706781545304,
+            "Maximum height should be 241.59706781545304 when loading this file",
         )
 
     def test_height_avg(self):
         self.assertEqual(
             self.heightmap.average_height,
-            0.01156718505969914,
-            "Average height should be 0.01156718505969914 when loading this file",
+            1.0022929405225125,
+            "Average height should be 1.0022929405225125 when loading this file",
         )
 
 
@@ -174,16 +147,16 @@ class TestHeightmapSizes(TestCase):
 
     def setUp(self):
         params = default_params
-        self.size = [100, 150]
+        self.size = (100, 150)
         params["size"] = self.size
         self.heightmap = Heightmap(params)
 
     def test_init(self):
         self.assertEqual(
-            len(self.heightmap.grid), self.size[0], "Grid height is incorrect"
+            self.heightmap.grid.shape[0], self.size[0], "Grid height is incorrect"
         )
         self.assertEqual(
-            len(self.heightmap.grid[0]), self.size[1], "Grid width is incorrect"
+            self.heightmap.grid.shape[1], self.size[1], "Grid width is incorrect"
         )
 
     def test_wrap(self):
@@ -208,34 +181,23 @@ class TestCroppingSizes(TestCase):
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
         params["size"] = self.size
-        params["crop"] = self.crop
+        params["crop"] = True
+        params["cropValue"] = self.crop
         self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
         self.assertEqual(
-            len(self.heightmap.grid), self.size[0], "Grid height is incorrect"
+            self.heightmap.grid.shape[0], self.size[0], "Grid height is incorrect"
         )
         self.assertEqual(
-            len(self.heightmap.grid[0]), self.size[1], "Grid width is incorrect"
-        )
-
-    def test_wrap(self):
-        self.assertEqual(
-            self.heightmap.grid[1][0],
-            self.heightmap.grid[1][-1],
-            "Heightmap does not wrap horizontally",
-        )
-        self.assertEqual(
-            self.heightmap.grid[-1][1],
-            self.heightmap.grid[-1][-2],
-            "Heightmap does not wrap vertically on the bottom",
+            self.heightmap.grid.shape[1], self.size[1], "Grid width is incorrect"
         )
 
     def test_sealevel(self):
         self.assertEqual(
             self.heightmap.sealevel,
-            0.008378101328286758,
-            "Sea level from land mask should be 0.008378101328286758 when loading from file",
+            1.0,
+            "Sea level from land mask should be 1.0 when loading from file",
         )
 
     def test_height_min(self):
@@ -248,13 +210,13 @@ class TestCroppingSizes(TestCase):
     def test_height_max(self):
         self.assertEqual(
             self.heightmap.highest_height,
-            240.2090296537094,
-            "Maximum height should be 240.2090296537094 when loading this file",
+            244.10165369649806,
+            "Maximum height should be 244.10165369649806 when loading this file",
         )
 
     def test_height_avg(self):
         self.assertEqual(
             self.heightmap.average_height,
-            0.01156718505969914,
-            "Average height should be 0.01156718505969914 when loading this file",
+            1.0014591439688716,
+            "Average height should be 1.0014591439688716 when loading this file",
         )

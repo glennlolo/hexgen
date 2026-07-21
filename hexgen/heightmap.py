@@ -1,7 +1,7 @@
 import math
 import random
 import numpy as np
-from PIL import Image, ImageFilter
+from PIL import Image
 
 
 class Heightmap:
@@ -15,8 +15,8 @@ class Heightmap:
             self.height = self.size
             self.width = self.size
         elif isinstance(self.size, tuple) and len(self.size) == 2:
-            self.width = self.size[0]
-            self.height = self.size[1]
+            self.height = self.size[0]
+            self.width = self.size[1]
         elif self.size == 100 and params.get("crop"): # If default size provided, adapt the heightmap to the cropping
             if debug:
                 print("Adapting the size of the map to cropping ratio")
@@ -35,12 +35,15 @@ class Heightmap:
                 cropValue[2] + self.width-remPix[0],
                 cropValue[3] + self.height-remPix[1],
             )
+        elif self.size == 100 and not params.get("crop"):
+            self.height = 100
+            self.width = 100
         else:
             raise ValueError(
                 "Size parameter must be a single value or a tuple of two values (height, width)"
             )
 
-        self.grid = np.ndarray((self.height, self.width), dtype=float)
+        self.grid = np.full((self.height, self.width), 0.0, dtype=float)
         if heightmapFile == "":
             # start making the heightmap
             self.grid[0][0] = random.randint(0, 255)
@@ -94,6 +97,7 @@ class Heightmap:
             if landMaskFile == "":
                 # By default use 1.0 as default sea level
                 self.sealevel = 1.0
+                pixMask = []
                 if debug:
                     print(
                         "Sea level defaulting at {} for heightmap file".format(
@@ -142,23 +146,29 @@ class Heightmap:
                                 ) : imSize[0]
                             ]
                         )
-                        pMask.append(
-                            pixMask[
-                                int(
-                                    i * factor[1] * imSize[0] + (k + j * factor[0])
-                                ) : int(
-                                    (i + 1) * factor[1] * imSize[0]
-                                    + (k + j * factor[0])
-                                ) : imSize[0]
-                            ]
-                        )
+                        if pixMask != []:
+                            pMask.append(
+                                pixMask[
+                                    int(
+                                        i * factor[1] * imSize[0] + (k + j * factor[0])
+                                    ) : int(
+                                        (i + 1) * factor[1] * imSize[0]
+                                        + (k + j * factor[0])
+                                    ) : imSize[0]
+                                ]
+                            )
                     
-                    # Average the pixel values to get the height value for the heightmap
-                    if all((0,0,0,255) in sub for sub in pMask):
-                        # If the pixel is black in the land mask, it is water, set height to 0
-                        self.grid[i][j] = 0.0
+                    if pMask != []:
+                        # Use the landmask to better evaluate hex heights
+                        if all((0,0,0,255) in sub for sub in pMask):
+                            # If the pixel is black in the land mask, it is water, set height to 0
+                            self.grid[i][j] = 0.0
+                        else:
+                            self.grid[i][j] = np.mean(p) * 255 / maxPix + 1.0  # Normalize the height value to be between 1 and 256
                     else:
-                        self.grid[i][j] = np.mean(p) * 255 / maxPix + 1.0  # Normalize the height value to be between 1 and 256
+                        # By default use only the heightmap value for altitude estimation of the hexes
+                        self.grid[i][j] = np.mean(p) * 255 / maxPix  # Normalize the height value to be between 0 and 256
+
             self.highest_height = np.max(self.grid)
             self.lowest_height = np.min(self.grid)
             self.average_height = np.median(self.grid)
@@ -181,7 +191,7 @@ class Heightmap:
             if y == 0:
                 self.grid[x][self.width - 1] = c
             if x == 0 or x == self.height - 1:
-                if y < self.height - 1:
+                if y < self.width - 1:
                     self.grid[x][self.width - 1 - y] = c
             range_low, range_high = self.params.get("height_range")
             if c < range_low:
