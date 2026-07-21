@@ -90,7 +90,7 @@ class TestLandmaskFileReading(TestCase):
         )
 
     def test_height_avg(self):
-        self.assertEqual( #Average hesight change because of the land mask
+        self.assertEqual(  # Average hesight change because of the land mask
             self.heightmap.average_height,
             2.7470426814622666,
             "Average height should be 2.7470426814622666 when loading this file",
@@ -111,8 +111,12 @@ class TestCropping(TestCase):
         self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
-        self.assertEqual(self.heightmap.grid.shape[0], 98, "Grid size is incorrect") #Because of auto size adaptation
-        self.assertEqual(self.heightmap.grid.shape[1], self.size, "Grid size is incorrect")
+        self.assertEqual(
+            self.heightmap.grid.shape[0], 98, "Grid size is incorrect"
+        )  # Because of auto size adaptation
+        self.assertEqual(
+            self.heightmap.grid.shape[1], self.size, "Grid size is incorrect"
+        )
 
     def test_sealevel(self):
         self.assertEqual(
