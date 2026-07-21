@@ -135,8 +135,8 @@ class MapGen:
         print("Making {} aquifers".format(num_aquifers)) if self.debug else False
         aquifers = []
         while len(aquifers) < num_aquifers:
-            rx = random.randint(0, len(self.hex_grid.grid) - 1)
-            ry = random.randint(0, len(self.hex_grid.grid) - 1)
+            rx = random.randint(0, self.hex_grid.grid.shape[0] - 1)
+            ry = random.randint(0, self.hex_grid.grid.shape[1] - 1)
             hex = self.hex_grid.grid[rx][ry]
             if hex.is_land and hex.moisture < 5:
                 aquifers.append(hex)
@@ -318,8 +318,8 @@ class MapGen:
         if num_territories == 0:
             return
         while len(self.territories) < num_territories:
-            rx = random.randint(0, len(self.hex_grid.grid) - 1)
-            ry = random.randint(0, len(self.hex_grid.grid) - 1)
+            rx = random.randint(0, self.hex_grid.grid.shape[0] - 1)
+            ry = random.randint(0, self.hex_grid.grid.shape[1] - 1)
             hex_s = self.hex_grid.grid[rx][ry]
             if hex_s.is_land:
                 color = (
