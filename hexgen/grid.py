@@ -1,4 +1,5 @@
 import math
+from PIL import Image
 import numpy as np
 from hexgen.hex import Hex
 
@@ -16,6 +17,8 @@ class Grid:
         self.highest_height = heightmap.highest_height
         self.lowest_height = heightmap.lowest_height
         self.max_size = np.max([self.heightmap.height, self.heightmap.width])
+        
+        self.climateMap = None #By default no climate map is loaded
 
         self.avg_altitude = 0
 
@@ -63,6 +66,17 @@ class Grid:
         else:
             self.centerLatitude = 0.0
             self.latitudeRange = [90, -90]
+
+        if params.get("climateMapFile") != "":
+            # Load climate map from file and store it in the grid
+            if debug:
+                print("Loading climate map from file: {}".format(params.get("climateMapFile")))
+            im = Image.open(params.get("climateMapFile"))
+            if params["crop"]:
+                im = im.crop(params.get("cropValue"))
+            if debug:
+                im.show()
+            self.climateMap = np.array(im)
 
         self.calculate()
 
