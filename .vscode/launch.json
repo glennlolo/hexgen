@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python Debugger: Current File with Arguments",
+            "name": "Debug Hexgen",
             "type": "debugpy",
             "request": "launch",
             "program": "${workspaceFolder}/bin/hexgen",
             "console": "integratedTerminal",
-            "args": "--debug --image --crop --heightmapFile hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png --landMaskFile hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png --mapFile hexgen/test/orogen-satellite-0486ll4cxgegk2cs6um9hh.png"
+            "args": "--debug --image --crop --heightmapFile hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png --landMaskFile hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png --mapFile hexgen/test/orogen-satellite-0486ll4cxgegk2cs6um9hh.png --climateMapFile hexgen/test/orogen-climate-0486ll4cxgegk2cs6um9hh.png"
         }
     ]
 }
