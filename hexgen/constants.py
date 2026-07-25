@@ -211,3 +211,8 @@ VOLCANIC_LIQUID = [
     (225, 0, 0),
     (200, 5, 5),
 ]
+
+OROGEN_KOPPEN_DEFAULT_COLORS = [
+    (28, 28, 46),  #Empty color for map curvature
+    (147,177,211), #Ocean color
+]

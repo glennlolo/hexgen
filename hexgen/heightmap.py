@@ -46,6 +46,7 @@ class Heightmap:
             )
 
         self.grid = np.full((self.height, self.width), 0.0, dtype=float)
+        self.factor = (None, None)
         if heightmapFile == "":
             # start making the heightmap
             self.grid[0][0] = random.randint(0, 255)
@@ -88,7 +89,7 @@ class Heightmap:
             if debug:
                 im.show()
             imSize = im.size  # Get the width and height of the image
-            factor = (
+            self.factor = (
                 math.floor(imSize[0] / self.width),
                 math.floor(imSize[1] / self.height),
             )  # Calculate the scaling factor
@@ -137,14 +138,14 @@ class Heightmap:
                     p = []
                     pMask = []
                     # Construct the pixels of the original image
-                    for k in range(factor[0]):
+                    for k in range(self.factor[0]):
                         p.append(
                             pix[
                                 int(
-                                    i * factor[1] * imSize[0] + (k + j * factor[0])
+                                    i * self.factor[1] * imSize[0] + (k + j * self.factor[0])
                                 ) : int(
-                                    (i + 1) * factor[1] * imSize[0]
-                                    + (k + j * factor[0])
+                                    (i + 1) * self.factor[1] * imSize[0]
+                                    + (k + j * self.factor[0])
                                 ) : imSize[
                                     0
                                 ]
@@ -154,10 +155,10 @@ class Heightmap:
                             pMask.append(
                                 pixMask[
                                     int(
-                                        i * factor[1] * imSize[0] + (k + j * factor[0])
+                                        i * self.factor[1] * imSize[0] + (k + j * self.factor[0])
                                     ) : int(
-                                        (i + 1) * factor[1] * imSize[0]
-                                        + (k + j * factor[0])
+                                        (i + 1) * self.factor[1] * imSize[0]
+                                        + (k + j * self.factor[0])
                                     ) : imSize[
                                         0
                                     ]
