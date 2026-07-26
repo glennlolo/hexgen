@@ -94,6 +94,8 @@ class TestGridWithClimateMap(TestCase):
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
         self.params["climateMapFile"] = "hexgen/test/orogen-climate-0486ll4cxgegk2cs6um9hh.png"
+        self.params["crop"] = False
+        self.params["cropValue"] = (None, None, None, None)
         self.heightmap = Heightmap(self.params, False, heightmapFile, landMaskFile)
         self.grid = Grid(self.heightmap, self.params)
 
