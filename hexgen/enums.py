@@ -341,38 +341,195 @@ class Season(Enum):
     summer = "Summer"
     autumn = "Autumn"
 
+
 class KoppenClimate(SuperEnum):
     __keys__ = ["id", "code", "title", "color", "description"]
 
     default = (0, "XX", "Default", (255, 255, 255), "Default climate")
-    tropical_rainforest = (1, "Af", "Tropical Rainforest", (0, 0, 255), "Rainforest climate")
+    tropical_rainforest = (
+        1,
+        "Af",
+        "Tropical Rainforest",
+        (0, 0, 255),
+        "Rainforest climate",
+    )
     tropical_monsoon = (2, "Am", "Tropical Monsoon", (0, 182, 255), "Monsoon climate")
-    tropical_dry_winter_savanna = (3, "Aw", "Tropical Savanna, dry winter", (142, 214, 253), "Savanna dry winter climate")
+    tropical_dry_winter_savanna = (
+        3,
+        "Aw",
+        "Tropical Savanna, dry winter",
+        (142, 214, 253),
+        "Savanna dry winter climate",
+    )
     arid_desert_hot = (4, "BWh", "Arid Desert Hot", (255, 0, 0), "Hot desert climate")
-    arid_desert_cold = (5, "BWk", "Arid Desert Cold", (255, 202, 202), "Cold desert climate")
-    arid_steppe_hot = (6, "BSh", "Arid Steppe Hot", (251, 211, 0), "Hot semi-arid climate")
-    arid_steppe_cold = (7, "BSk", "Arid Steppe Cold", (255, 238, 167), "Cold semi-arid climate")
-    temperate_dry_winter_hot_summer = (8, "Cwa", "Temperate Dry Winter, Hot Summer", (202, 255, 202), "Moonsoon-influenced humid subtropical climate")
-    temperate_dry_winter_warm_summer = (9, "Cwb", "Temperate Dry Winter, Warm Summer", (167, 229, 167), "Subtropical highland climate or Moonsoon-influenced temperate oceanic climate")
-    temperate_dry_winter_cold_summer = (10, "Cwc", "Temperate Dry Winter, Cold Summer", (124, 202, 124), "Cold subtropical highland climate or Moonsoon-influenced temperate oceanic climate")
-    temperate_humid_subtropical = (11, "Cfa", "Temperate Humid Subtropical", (229, 255, 151), "Humid subtropical climate")
-    temperate_oceanic = (12, "Cfb", "Temperate Oceanic", (167, 255, 151), "Temperate oceanic climate or subtropical highland climate")
-    temperate_subpolar_oceanic = (13, "Cfc", "Temperate Subpolar Oceanic", (124, 229, 0), "Subpolar oceanic climate")
-    temperate_dry_summer_hot_summer = (14, "Csa", "Temperate Dry Summer, Hot Summer", (255, 255, 0), "Mediterranean climate, hot summer")
-    temperate_dry_summer_warm_summer = (15, "Csb", "Temperate Dry Summer, Warm Summer", (229, 229, 0), "Mediterranean climate, warm summer")
-    temperate_dry_summer_cold_summer = (16, "Csc", "Temperate Dry Summer, Cold Summer", (202, 202, 0), "Mediterranean climate, cold summer")
-    continental_humid_hot_summer = (17, "Dfa", "Continental Humid Hot Summer", (0, 255, 255), "Hot-summer humid continental climate")
-    continental_humid_warm_summer = (18, "Dfb", "Continental Humid Warm Summer", (129, 229, 255), "Warm-summer humid continental climate")
-    continental_humid_cold = (19, "Dfc", "Continental Humid Cold", (0, 186, 186), "Subarctic climate")
-    continental_humid_very_cold = (20, "Dfd", "Continental Humid Very Cold", (0, 142, 163), "Extremely cold subarctic climate")
-    continental_dry_winter_hot_summer = (21, "Dsa", "Continental Dry Winter, Hot Summer", (243, 188, 255), "Mediterranean-influenced hot-summer humid continental climate")
-    continental_dry_winter_warm_summer = (22, "Dsb", "Continental Dry Winter, Warm Summer", (218, 159, 238), "Mediterranean-influenced warm-summer humid continental climate")
-    continental_dry_winter_cold_summer = (23, "Dsc", "Continental Dry Winter, Cold Summer", (188, 124, 211), "Mediterranean-influenced subarctic climate")
-    continental_dry_winter_very_cold = (24, "Dsd", "Continental Dry Winter, Very Cold", (159, 88, 179), "Mediterranean-influenced extremely cold subarctic climate")
-    continental_dry_summer_hot_summer = (25, "Dwa", "Continental Dry Summer, Hot Summer", (214, 216, 255), "Moonsoon-influenced hot-summer humid continental climate")
-    continental_dry_summer_warm_summer = (26, "Dwb", "Continental Dry Summer, Warm Summer", (175, 182, 229), "Moonsoon-influenced warm-summer humid continental climate")
-    continental_dry_summer_cold_summer = (27, "Dwc", "Continental Dry Summer, Cold Summer", (147, 151, 229), "Moonsoon-influenced subarctic climate")
-    continental_dry_summer_very_cold = (28, "Dwd", "Continental Dry Summer, Very Cold", (124, 0, 192), "Moonsoon-influenced extremely cold subarctic climate")
+    arid_desert_cold = (
+        5,
+        "BWk",
+        "Arid Desert Cold",
+        (255, 202, 202),
+        "Cold desert climate",
+    )
+    arid_steppe_hot = (
+        6,
+        "BSh",
+        "Arid Steppe Hot",
+        (251, 211, 0),
+        "Hot semi-arid climate",
+    )
+    arid_steppe_cold = (
+        7,
+        "BSk",
+        "Arid Steppe Cold",
+        (255, 238, 167),
+        "Cold semi-arid climate",
+    )
+    temperate_dry_winter_hot_summer = (
+        8,
+        "Cwa",
+        "Temperate Dry Winter, Hot Summer",
+        (202, 255, 202),
+        "Moonsoon-influenced humid subtropical climate",
+    )
+    temperate_dry_winter_warm_summer = (
+        9,
+        "Cwb",
+        "Temperate Dry Winter, Warm Summer",
+        (167, 229, 167),
+        "Subtropical highland climate or Moonsoon-influenced temperate oceanic climate",
+    )
+    temperate_dry_winter_cold_summer = (
+        10,
+        "Cwc",
+        "Temperate Dry Winter, Cold Summer",
+        (124, 202, 124),
+        "Cold subtropical highland climate or Moonsoon-influenced temperate oceanic climate",
+    )
+    temperate_humid_subtropical = (
+        11,
+        "Cfa",
+        "Temperate Humid Subtropical",
+        (229, 255, 151),
+        "Humid subtropical climate",
+    )
+    temperate_oceanic = (
+        12,
+        "Cfb",
+        "Temperate Oceanic",
+        (167, 255, 151),
+        "Temperate oceanic climate or subtropical highland climate",
+    )
+    temperate_subpolar_oceanic = (
+        13,
+        "Cfc",
+        "Temperate Subpolar Oceanic",
+        (124, 229, 0),
+        "Subpolar oceanic climate",
+    )
+    temperate_dry_summer_hot_summer = (
+        14,
+        "Csa",
+        "Temperate Dry Summer, Hot Summer",
+        (255, 255, 0),
+        "Mediterranean climate, hot summer",
+    )
+    temperate_dry_summer_warm_summer = (
+        15,
+        "Csb",
+        "Temperate Dry Summer, Warm Summer",
+        (229, 229, 0),
+        "Mediterranean climate, warm summer",
+    )
+    temperate_dry_summer_cold_summer = (
+        16,
+        "Csc",
+        "Temperate Dry Summer, Cold Summer",
+        (202, 202, 0),
+        "Mediterranean climate, cold summer",
+    )
+    continental_humid_hot_summer = (
+        17,
+        "Dfa",
+        "Continental Humid Hot Summer",
+        (0, 255, 255),
+        "Hot-summer humid continental climate",
+    )
+    continental_humid_warm_summer = (
+        18,
+        "Dfb",
+        "Continental Humid Warm Summer",
+        (129, 229, 255),
+        "Warm-summer humid continental climate",
+    )
+    continental_humid_cold = (
+        19,
+        "Dfc",
+        "Continental Humid Cold",
+        (0, 186, 186),
+        "Subarctic climate",
+    )
+    continental_humid_very_cold = (
+        20,
+        "Dfd",
+        "Continental Humid Very Cold",
+        (0, 142, 163),
+        "Extremely cold subarctic climate",
+    )
+    continental_dry_winter_hot_summer = (
+        21,
+        "Dsa",
+        "Continental Dry Winter, Hot Summer",
+        (243, 188, 255),
+        "Mediterranean-influenced hot-summer humid continental climate",
+    )
+    continental_dry_winter_warm_summer = (
+        22,
+        "Dsb",
+        "Continental Dry Winter, Warm Summer",
+        (218, 159, 238),
+        "Mediterranean-influenced warm-summer humid continental climate",
+    )
+    continental_dry_winter_cold_summer = (
+        23,
+        "Dsc",
+        "Continental Dry Winter, Cold Summer",
+        (188, 124, 211),
+        "Mediterranean-influenced subarctic climate",
+    )
+    continental_dry_winter_very_cold = (
+        24,
+        "Dsd",
+        "Continental Dry Winter, Very Cold",
+        (159, 88, 179),
+        "Mediterranean-influenced extremely cold subarctic climate",
+    )
+    continental_dry_summer_hot_summer = (
+        25,
+        "Dwa",
+        "Continental Dry Summer, Hot Summer",
+        (214, 216, 255),
+        "Moonsoon-influenced hot-summer humid continental climate",
+    )
+    continental_dry_summer_warm_summer = (
+        26,
+        "Dwb",
+        "Continental Dry Summer, Warm Summer",
+        (175, 182, 229),
+        "Moonsoon-influenced warm-summer humid continental climate",
+    )
+    continental_dry_summer_cold_summer = (
+        27,
+        "Dwc",
+        "Continental Dry Summer, Cold Summer",
+        (147, 151, 229),
+        "Moonsoon-influenced subarctic climate",
+    )
+    continental_dry_summer_very_cold = (
+        28,
+        "Dwd",
+        "Continental Dry Summer, Very Cold",
+        (124, 0, 192),
+        "Moonsoon-influenced extremely cold subarctic climate",
+    )
     polar_tundra = (29, "ET", "Polar Tundra", (218, 218, 218), "Tundra climate")
     polar_ice_cap = (30, "EF", "Polar Ice Cap", (172, 172, 172), "Ice cap climate")
 
