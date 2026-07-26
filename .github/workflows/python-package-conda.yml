@@ -18,6 +18,8 @@ jobs:
       uses: actions/setup-python@main
       with:
         python-version: '3.13.5'
+    - name: Install Additional Softwares
+      run: apt install magick
     - name: Create the venv
       run: |
         python3 -m venv $GITHUB_WORKSPACE/.venv
