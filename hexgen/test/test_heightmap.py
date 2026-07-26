@@ -146,6 +146,18 @@ class TestCropping(TestCase):
             "Average height should be 1.0022929405225125 when loading this file",
         )
 
+    def test_crop_error(self):
+        with self.assertRaises(AssertionError):
+            params = default_params
+            self.size = 100
+            self.crop = [5000, 1400, 5701, 2084]
+            heightmapFile = ""
+            landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
+            params["size"] = self.size
+            params["crop"] = True
+            params["cropValue"] = self.crop
+            self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
+
 
 class TestHeightmapSizes(TestCase):
 

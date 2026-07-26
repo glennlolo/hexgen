@@ -9,6 +9,9 @@ class Heightmap:
     def __init__(self, params, debug=False, heightmapFile="", landMaskFile=""):
         self.params = params
 
+        if self.params.get("crop"):
+            assert heightmapFile != "", "Heightmap file is required when cropping is enabled !"
+
         self.size = params.get("size")
         if isinstance(self.size, int) and self.size != 100:
             # If their is only one value for size, we consider the heightmap to be square
