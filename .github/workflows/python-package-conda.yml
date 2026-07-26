@@ -12,14 +12,15 @@ jobs:
     strategy:
       max-parallel: 5
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
     - uses: actions/checkout@main
     - name: Set up Python 3.13.5
       uses: actions/setup-python@main
       with:
         python-version: '3.13.5'
-    - name: Install Additional Softwares
-      uses: mfinelli/setup-imagemagick@v8
     - name: Create the venv
       run: |
         python3 -m venv $GITHUB_WORKSPACE/.venv

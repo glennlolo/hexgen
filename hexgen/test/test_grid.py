@@ -1,6 +1,8 @@
 from io import StringIO
+import os
 from unittest import TestCase
 from unittest.mock import patch
+from unittest import skipIf
 
 from hexgen.grid import Grid, GridBoundsException
 from hexgen.heightmap import Heightmap
@@ -10,7 +12,6 @@ from hexgen.mapgen import default_params
 import numpy as np
 from subprocess import call
 from subprocess import Popen, PIPE
-
 
 class TestGrid(TestCase):
 
@@ -245,6 +246,8 @@ class TestGridWithCropAndClimateMap(TestCase):
             "Climate map values should not be greater than the number of defined Koppen climates (30)",
         )
 
+    @skipIf("GITHUB_RUN_ID" in os.environ,
+                     "CI Tests cannot open images, skip test")
     def test_debug(self):
         with patch("sys.stdout", new=StringIO()) as fake_out:
             self.grid = Grid(self.heightmap, self.params, debug=True)
