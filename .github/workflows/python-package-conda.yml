@@ -19,7 +19,7 @@ jobs:
       with:
         python-version: '3.13.5'
     - name: Install Additional Softwares
-      run: apt install magick
+      uses: mfinelli/setup-imagemagick@v8
     - name: Create the venv
       run: |
         python3 -m venv $GITHUB_WORKSPACE/.venv
