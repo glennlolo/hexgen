@@ -13,6 +13,7 @@ from hexgen.constants import (
 )
 from hexgen.enums import (
     Biome,
+    KoppenClimate,
     MapType,
     HexType,
     HexFeature,
@@ -281,62 +282,66 @@ class Hex:
         Computes the biome
         :return: Biome
         """
-        map_type = self.grid.params.get("map_type")
-        if map_type is MapType.barren:  # barren
-            if self.grid.params.get("pressure") < 0.003:  # trace atmosphere
-                return Biome.barren
-            else:  # small atmosphere
-                # TODO: determine where to put ice caps based on atmospheric compounds
-                if self in self.grid.coldest_hexes and self.temperature < 0:
-                    return Biome.barren_ice_caps
-                elif self.moisture > 5 or self.has_feature(HexFeature.lake):
-                    return Biome.barren_wet
+        if self.grid.climateMap is None:
+            map_type = self.grid.params.get("map_type")
+            if map_type is MapType.barren:  # barren
+                if self.grid.params.get("pressure") < 0.003:  # trace atmosphere
+                    return Biome.barren
+                else:  # small atmosphere
+                    # TODO: determine where to put ice caps based on atmospheric compounds
+                    if self in self.grid.coldest_hexes and self.temperature < 0:
+                        return Biome.barren_ice_caps
+                    elif self.moisture > 5 or self.has_feature(HexFeature.lake):
+                        return Biome.barren_wet
+                    else:
+                        return Biome.barren_dusty
+
+            elif map_type is MapType.terran:
+                temp = self.temperature[0]
+                rain = self.moisture
+                if temp <= -10:
+                    return Biome.arctic
+                elif 5 < rain and temp <= 0:
+                    return Biome.alpine_tundra
+                elif 0 <= rain <= 5 and temp <= 0:
+                    return Biome.tundra
+                elif 5 < rain and 0 < temp <= 7:
+                    return Biome.boreal_forest
+                elif 0 <= rain <= 3.5 and 0 < temp <= 20:
+                    return Biome.grasslands
+                elif 3.5 < rain <= 5 and 0 < temp <= 20:
+                    return Biome.shrubland
+                elif 0 <= rain < 4 and 20 < temp:
+                    return Biome.desert
+                elif 4 <= rain <= 8 and 20 < temp:
+                    return Biome.shrubland
+                elif 5 < rain <= 10 and 7 < temp <= 20:
+                    return Biome.savanna
+                elif 10 < rain <= 20 and 7 < temp <= 20:
+                    return Biome.temperate_forest
+                elif 20 < rain and 7 < temp <= 20:
+                    return Biome.temperate_rainforest
+                elif 8 < rain <= 20 and 20 < temp:
+                    return Biome.tropical_forest
+                elif 20 < rain and 20 < temp:
+                    return Biome.tropical_rainforest
+
+                raise Exception(
+                    "Biome invalid Rainfall: {}, Temperature: {}".format(rain, temp)
+                )
+
+            elif map_type is MapType.volcanic:
+                if self.altitude < 60:
+                    return Biome.volcanic_liquid
+                elif self.has_feature(HexFeature.lava_flow):
+                    return Biome.volcanic_molten_river
                 else:
-                    return Biome.barren_dusty
+                    return Biome.volcanic_solid
 
-        elif map_type is MapType.terran:
-            temp = self.temperature[0]
-            rain = self.moisture
-            if temp <= -10:
-                return Biome.arctic
-            elif 5 < rain and temp <= 0:
-                return Biome.alpine_tundra
-            elif 0 <= rain <= 5 and temp <= 0:
-                return Biome.tundra
-            elif 5 < rain and 0 < temp <= 7:
-                return Biome.boreal_forest
-            elif 0 <= rain <= 3.5 and 0 < temp <= 20:
-                return Biome.grasslands
-            elif 3.5 < rain <= 5 and 0 < temp <= 20:
-                return Biome.shrubland
-            elif 0 <= rain < 4 and 20 < temp:
-                return Biome.desert
-            elif 4 <= rain <= 8 and 20 < temp:
-                return Biome.shrubland
-            elif 5 < rain <= 10 and 7 < temp <= 20:
-                return Biome.savanna
-            elif 10 < rain <= 20 and 7 < temp <= 20:
-                return Biome.temperate_forest
-            elif 20 < rain and 7 < temp <= 20:
-                return Biome.temperate_rainforest
-            elif 8 < rain <= 20 and 20 < temp:
-                return Biome.tropical_forest
-            elif 20 < rain and 20 < temp:
-                return Biome.tropical_rainforest
-
-            raise Exception(
-                "Biome invalid Rainfall: {}, Temperature: {}".format(rain, temp)
-            )
-
-        elif map_type is MapType.volcanic:
-            if self.altitude < 60:
-                return Biome.volcanic_liquid
-            elif self.has_feature(HexFeature.lava_flow):
-                return Biome.volcanic_molten_river
-            else:
-                return Biome.volcanic_solid
-
-        return Biome.lifeless
+            return Biome.lifeless
+        elif self.grid.climateMap is not None:
+            climate_id = self.grid.climateMap[self.x][self.y]
+            return KoppenClimate.default.get(climate_id).toBiome()
 
     @property
     def max_size(self):

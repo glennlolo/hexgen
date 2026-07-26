@@ -7,10 +7,12 @@ from hexgen.heightmap import Heightmap
 class TestHeightmap(TestCase):
 
     def setUp(self):
-        params = default_params
+        self.params = default_params
         self.size = 50
-        params["size"] = self.size
-        self.heightmap = Heightmap(params)
+        self.params["size"] = self.size
+        self.params["crop"] = False
+        self.params["cropValue"] = (None, None, None, None)
+        self.heightmap = Heightmap(self.params)
 
     def test_init(self):
         self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
@@ -31,11 +33,11 @@ class TestHeightmap(TestCase):
 class TestHeightmapFileReading(TestCase):
 
     def setUp(self):
-        params = default_params
+        self.params = default_params
         self.size = 100
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
-        params["size"] = self.size
-        self.heightmap = Heightmap(params, False, heightmapFile)
+        self.params["size"] = self.size
+        self.heightmap = Heightmap(self.params, False, heightmapFile)
 
     def test_init(self):
         self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
@@ -72,12 +74,12 @@ class TestHeightmapFileReading(TestCase):
 class TestLandmaskFileReading(TestCase):
 
     def setUp(self):
-        params = default_params
+        self.params = default_params
         self.size = 100
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
-        params["size"] = self.size
-        self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
+        self.params["size"] = self.size
+        self.heightmap = Heightmap(self.params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
         self.assertEqual(len(self.heightmap.grid), self.size, "Grid size is incorrect")
@@ -100,15 +102,15 @@ class TestLandmaskFileReading(TestCase):
 class TestCropping(TestCase):
 
     def setUp(self):
-        params = default_params
+        self.params = default_params
         self.size = 100
         self.crop = [5000, 1400, 5701, 2084]
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
-        params["size"] = self.size
-        params["crop"] = True
-        params["cropValue"] = self.crop
-        self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
+        self.params["size"] = self.size
+        self.params["crop"] = True
+        self.params["cropValue"] = self.crop
+        self.heightmap = Heightmap(self.params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
         self.assertEqual(
@@ -146,14 +148,28 @@ class TestCropping(TestCase):
             "Average height should be 1.0022929405225125 when loading this file",
         )
 
+    def test_crop_error(self):
+        with self.assertRaises(AssertionError):
+            self.params = default_params
+            self.size = 100
+            self.crop = [5000, 1400, 5701, 2084]
+            heightmapFile = ""
+            landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
+            self.params["size"] = self.size
+            self.params["crop"] = True
+            self.params["cropValue"] = self.crop
+            self.heightmap = Heightmap(self.params, False, heightmapFile, landMaskFile)
+
 
 class TestHeightmapSizes(TestCase):
 
     def setUp(self):
-        params = default_params
+        self.params = default_params
         self.size = (100, 150)
-        params["size"] = self.size
-        self.heightmap = Heightmap(params)
+        self.params["size"] = self.size
+        self.params["crop"] = False
+        self.params["cropValue"] = (None, None, None, None)
+        self.heightmap = Heightmap(self.params)
 
     def test_init(self):
         self.assertEqual(
@@ -179,15 +195,15 @@ class TestHeightmapSizes(TestCase):
 class TestCroppingSizes(TestCase):
 
     def setUp(self):
-        params = default_params
+        self.params = default_params
         self.size = (100, 150)
         self.crop = [5000, 1400, 5701, 2084]
         heightmapFile = "hexgen/test/orogen-land-heightmap-0486ll4cxgegk2cs6um9hh.png"
         landMaskFile = "hexgen/test/orogen-landmask-0486ll4cxgegk2cs6um9hh.png"
-        params["size"] = self.size
-        params["crop"] = True
-        params["cropValue"] = self.crop
-        self.heightmap = Heightmap(params, False, heightmapFile, landMaskFile)
+        self.params["size"] = self.size
+        self.params["crop"] = True
+        self.params["cropValue"] = self.crop
+        self.heightmap = Heightmap(self.params, False, heightmapFile, landMaskFile)
 
     def test_init(self):
         self.assertEqual(

@@ -27,6 +27,7 @@ parser.add_argument("--heightmapFile", type=str)
 parser.add_argument("--landMaskFile", type=str)
 parser.add_argument("--crop", action="store_true")
 parser.add_argument("--cropValue", action="extend", nargs=4, type=int)
+parser.add_argument("--climateMapFile", type=str)
 args = parser.parse_args()
 
 options = {
@@ -43,6 +44,7 @@ options = {
     "export_type": args.export_type or "png",
     "crop": args.crop or False,
     "cropValue": args.cropValue or (None, None, None, None),
+    "climateMapFile": args.climateMapFile or ""
 }
 
 if isinstance(options["size"], list):

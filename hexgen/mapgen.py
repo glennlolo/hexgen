@@ -57,6 +57,7 @@ default_params = {
     # cropping
     "crop": False,
     "cropValue": (None, None, None, None),
+    "climateMapFile": "",
 }
 
 

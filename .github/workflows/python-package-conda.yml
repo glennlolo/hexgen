@@ -12,6 +12,9 @@ jobs:
     strategy:
       max-parallel: 5
 
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
     - uses: actions/checkout@main
     - name: Set up Python 3.13.5
