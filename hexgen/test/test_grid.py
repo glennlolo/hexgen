@@ -8,6 +8,8 @@ from hexgen.hex import Hex
 from hexgen.mapgen import default_params
 
 import numpy as np
+from subprocess import call
+from subprocess import Popen, PIPE
 
 class TestGrid(TestCase):
 
@@ -117,6 +119,9 @@ class TestGridWithCropAndClimateMap(TestCase):
         self.heightmap = Heightmap(self.params, False, heightmapFile, landMaskFile)
         self.grid = Grid(self.heightmap, self.params)
 
+    def tearDown(self):
+        call("kill $(ps | awk '/display/ {print $1}')", shell=True)
+
     def test_climate_map(self):
         self.assertIsNotNone(self.grid.climateMap, "Climate map should not be None when provided")
         self.assertEqual(self.grid.climateMap.shape[0], self.size, "Climate map size is incorrect")
@@ -124,3 +129,12 @@ class TestGridWithCropAndClimateMap(TestCase):
         self.assertIsInstance(self.grid.climateMap[0][0], np.uint8, "Climate map values should be integers representing climate IDs")
         self.assertGreaterEqual(np.min(self.grid.climateMap), 0, "Climate map values should be non-negative integers")
         self.assertLessEqual(np.max(self.grid.climateMap), 30, "Climate map values should not be greater than the number of defined Koppen climates (30)")
+
+    def test_debug(self):
+        with patch('sys.stdout', new=StringIO()) as fake_out:
+            self.grid = Grid(self.heightmap, self.params, debug=True)
+            self.assertIn("Making grid", fake_out.getvalue())
+            self.assertIn("Centering grid latitude at : 13.447265625, with range [28.4765625, -1.58203125]", fake_out.getvalue())
+        pid = Popen("ps | awk '/display/ {print $1}'", shell=True, stdout=PIPE).stdout.read()
+        self.assertIsNotNone(pid, "climate map should be running after grid initialization with climate map and debug mode")
+        self.assertEqual(len(pid.splitlines()), 2, "There should be only two display processes running for the climate map")
