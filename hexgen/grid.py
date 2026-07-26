@@ -79,7 +79,7 @@ class Grid:
                 im.show()
             imMap = im.get_flattened_data()
             imSize = im.size
-            self.climateMap = np.zeros((self.grid.shape[0], self.grid.shape[1]), dtype=int)
+            self.climateMap = np.zeros((self.grid.shape[0], self.grid.shape[1]), dtype=np.uint8)
             KoppenClimateColors = KoppenClimate.get_colors()
             if self.heightmap.factor == (None, None):
                 # Need to calculate the factor for climate map scaling
