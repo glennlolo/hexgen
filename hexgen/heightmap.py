@@ -10,7 +10,9 @@ class Heightmap:
         self.params = params
 
         if self.params.get("crop"):
-            assert heightmapFile != "", "Heightmap file is required when cropping is enabled !"
+            assert (
+                heightmapFile != ""
+            ), "Heightmap file is required when cropping is enabled !"
 
         self.size = params.get("size")
         if isinstance(self.size, int) and self.size != 100:
@@ -145,7 +147,8 @@ class Heightmap:
                         p.append(
                             pix[
                                 int(
-                                    i * self.factor[1] * imSize[0] + (k + j * self.factor[0])
+                                    i * self.factor[1] * imSize[0]
+                                    + (k + j * self.factor[0])
                                 ) : int(
                                     (i + 1) * self.factor[1] * imSize[0]
                                     + (k + j * self.factor[0])
@@ -158,7 +161,8 @@ class Heightmap:
                             pMask.append(
                                 pixMask[
                                     int(
-                                        i * self.factor[1] * imSize[0] + (k + j * self.factor[0])
+                                        i * self.factor[1] * imSize[0]
+                                        + (k + j * self.factor[0])
                                     ) : int(
                                         (i + 1) * self.factor[1] * imSize[0]
                                         + (k + j * self.factor[0])
